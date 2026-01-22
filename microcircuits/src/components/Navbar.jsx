@@ -117,14 +117,37 @@ const Navbar = () => {
                             textDecoration: 'none',
                             fontSize: '0.8rem',
                             fontWeight: '400',
-                            transition: 'color 0.3s',
+                            transition: 'all 0.3s ease',
                             padding: '4px 0',
-                            marginLeft: '0.5rem'
+                            marginLeft: '1rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            position: 'relative'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-                        onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.color = '#fff';
+                            const line = e.currentTarget.querySelector('.search-line');
+                            if (line) line.style.width = '100%';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.color = '#999';
+                            const line = e.currentTarget.querySelector('.search-line');
+                            if (line) line.style.width = '0';
+                        }}
                     >
-                        Search
+                        <Search size={14} style={{ opacity: 0.8 }} />
+                        <span>Search</span>
+                        <div className="search-line" style={{
+                            position: 'absolute',
+                            bottom: -2,
+                            left: 0,
+                            width: '0',
+                            height: '2px',
+                            background: '#00c2ff',
+                            borderRadius: '2px',
+                            transition: 'width 0.3s ease'
+                        }} />
                     </a>
                 </nav>
 
@@ -220,12 +243,30 @@ const Navbar = () => {
                             textDecoration: 'none',
                             fontSize: '1rem',
                             fontWeight: '400',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '8px',
-                            transition: 'color 0.3s'
+                            padding: '0.8rem 1.5rem',
+                            borderRadius: '12px',
+                            transition: 'all 0.3s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.6rem',
+                            width: '100%',
+                            justifyContent: 'center',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            background: 'rgba(255,255,255,0.02)'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.color = '#fff';
+                            e.currentTarget.style.background = 'rgba(0, 194, 255, 0.1)';
+                            e.currentTarget.style.borderColor = 'rgba(0, 194, 255, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.color = '#999';
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
                         }}
                     >
-                        Search
+                        <Search size={18} />
+                        <span>Search</span>
                     </a>
                 </nav>
 
