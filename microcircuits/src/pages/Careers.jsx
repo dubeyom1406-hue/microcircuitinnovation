@@ -33,6 +33,33 @@ const Careers = () => {
             description: "Lead the design architecture and RTL development for our next-generation semiconductor products.",
             date: "18 January 2026",
             pdfUrl: "#"
+        },
+        {
+            id: 4,
+            title: "Verification Engineer",
+            exp: "4-6 Years",
+            location: "Hyderabad",
+            description: "Verification of high-speed SOC interfaces.",
+            date: "20 January 2026",
+            pdfUrl: "#"
+        },
+        {
+            id: 5,
+            title: "Analog Layout Engineer",
+            exp: "5-8 Years",
+            location: "Bangalore",
+            description: "Deep sub-micron analog layout design.",
+            date: "22 January 2026",
+            pdfUrl: "#"
+        },
+        {
+            id: 6,
+            title: "Firmware Developer",
+            exp: "2-5 Years",
+            location: "Remote",
+            description: "Embedded C/C++ development for microcontrollers.",
+            date: "24 January 2026",
+            pdfUrl: "#"
         }
     ];
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,6 +78,29 @@ const Careers = () => {
         return () => clearTimeout(timer);
     }, []);
 
+    const scrollToSection = (direction) => {
+        const sections = ['hero-section', 'role-section', 'jobs-section'];
+        const currentPos = window.scrollY;
+
+        // Find section positions
+        const sectionOffsets = sections.map(id => {
+            const el = document.getElementById(id);
+            return el ? el.offsetTop : 0;
+        });
+
+        if (direction === 'down') {
+            const next = sectionOffsets.find(offset => offset > currentPos + 50);
+            if (next !== undefined) {
+                window.scrollTo({ top: next, behavior: 'smooth' });
+            }
+        } else {
+            const prev = [...sectionOffsets].reverse().find(offset => offset < currentPos - 50);
+            if (prev !== undefined) {
+                window.scrollTo({ top: prev, behavior: 'smooth' });
+            }
+        }
+    };
+
     const handleApply = (title) => {
         setSelectedJob(title);
         setIsModalOpen(true);
@@ -66,20 +116,20 @@ const Careers = () => {
             date: v.date,
             featured: v.id === 1
         }));
-        
+
     // Sort jobs based on current sort order
     const sortedJobs = allJobs.sort((a, b) => {
         // Parse dates to compare them properly
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
-        
+
         if (sortOrder === 'newest') {
             return dateB - dateA; // Newer dates first
         } else {
             return dateA - dateB; // Older dates first
         }
     });
-    
+
     // Pagination logic
     const totalPages = Math.ceil(sortedJobs.length / jobsPerPage);
     const indexOfLastJob = currentPage * jobsPerPage;
@@ -133,7 +183,7 @@ const Careers = () => {
                 // FINAL STATE: Page Content
                 <div key="careers-content">
                     {/* Slide 1: Join a team */}
-                    <section style={{
+                    <section id="hero-section" style={{
                         height: '100vh',
                         display: 'flex',
                         flexDirection: 'column',
@@ -182,14 +232,15 @@ const Careers = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1, y: [0, 10, 0] }}
                             transition={{ delay: 1, duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                            style={{ position: 'absolute', bottom: '3rem', left: '50%', transform: 'translateX(-50%)' }}
+                            style={{ position: 'absolute', bottom: '3rem', left: '50%', transform: 'translateX(-50%)', cursor: 'pointer' }}
+                            onClick={() => scrollToSection('down')}
                         >
-                            <ChevronDown size={32} color="#444" strokeWidth={1.5} />
+                            <ChevronDown size={32} color="#00c2ff" strokeWidth={1.5} />
                         </motion.div>
                     </section>
 
                     {/* Slide 2: "Role" */}
-                    <section style={{
+                    <section id="role-section" style={{
                         height: '100vh',
                         display: 'flex',
                         flexDirection: 'column',
@@ -216,54 +267,52 @@ const Careers = () => {
                     </section>
 
                     {/* Slide 3: Jobs Grid */}
-                    <section style={{
+                    <section id="jobs-section" style={{
                         padding: '4rem 1rem',
                         maxWidth: '1400px',
                         margin: '0 auto',
                         minHeight: '100vh'
                     }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem', flexDirection: 'column', gap: '1rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '3rem', gap: '1.5rem' }}>
                             <h3 style={{ fontSize: '2.5rem', fontWeight: 600, margin: 0 }}>
-                                Find Your <span style={{ color: '#00c2ff' }}>Perfect</span>
+                                Find Your <span style={{ color: '#00c2ff' }}>Perfect Role</span>
                             </h3>
-                            <div style={{ textAlign: 'right' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#888' }}>
-                                    <span style={{ fontSize: '1rem', fontWeight: 500 }}>Sort By:</span>
-                                    <div style={{ position: 'relative' }}>
-                                        <button
-                                            onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#888' }}>
+                                <span style={{ fontSize: '1rem', fontWeight: 500 }}>Sort By:</span>
+                                <div style={{ position: 'relative' }}>
+                                    <button
+                                        onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
+                                        style={{
+                                            background: 'transparent',
+                                            border: '1px solid #333',
+                                            color: '#fff',
+                                            padding: '6px 12px',
+                                            borderRadius: '20px',
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.background = 'rgba(255,255,255,0.1)';
+                                            e.target.style.borderColor = '#00c2ff';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.background = 'transparent';
+                                            e.target.style.borderColor = '#333';
+                                        }}
+                                    >
+                                        <span>{sortOrder === 'newest' ? 'Newest' : 'Oldest'}</span>
+                                        <ChevronDown
+                                            size={16}
                                             style={{
-                                                background: 'transparent',
-                                                border: '1px solid #333',
-                                                color: '#fff',
-                                                padding: '6px 12px',
-                                                borderRadius: '20px',
-                                                fontSize: '0.9rem',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '6px',
-                                                transition: 'all 0.3s ease'
+                                                transform: sortOrder === 'newest' ? 'rotate(0deg)' : 'rotate(180deg)',
+                                                transition: 'transform 0.3s ease'
                                             }}
-                                            onMouseEnter={(e) => {
-                                                e.target.style.background = 'rgba(255,255,255,0.1)';
-                                                e.target.style.borderColor = '#00c2ff';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.target.style.background = 'transparent';
-                                                e.target.style.borderColor = '#333';
-                                            }}
-                                        >
-                                            <span>{sortOrder === 'newest' ? 'Newest' : 'Oldest'}</span>
-                                            <ChevronDown 
-                                                size={16} 
-                                                style={{ 
-                                                    transform: sortOrder === 'newest' ? 'rotate(0deg)' : 'rotate(180deg)',
-                                                    transition: 'transform 0.3s ease'
-                                                }} 
-                                            />
-                                        </button>
-                                    </div>
+                                        />
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -396,14 +445,14 @@ const Careers = () => {
                             >
                                 Previous
                             </button>
-                                                    
+
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <span style={{ color: '#00c2ff' }}>{indexOfFirstJob + 1}-</span>
                                 <span>{Math.min(indexOfLastJob, sortedJobs.length)}</span>
                                 <span style={{ margin: '0 10px', color: '#444' }}>of</span>
                                 <span>{sortedJobs.length}</span>
                             </div>
-                                                    
+
                             <button
                                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                 disabled={currentPage === totalPages}
@@ -438,37 +487,64 @@ const Careers = () => {
                     {/* Down/Up arrows */}
                     <div style={{
                         position: 'fixed',
-                        bottom: '1rem',
-                        right: '1rem',
+                        bottom: '2rem',
+                        right: '2rem',
                         display: 'flex',
+                        flexDirection: 'column',
                         gap: '0.8rem',
-                        zIndex: 10
+                        zIndex: 100
                     }}>
-                        <div style={{
-                            width: '45px',
-                            height: '45px',
-                            borderRadius: '50%',
-                            background: 'rgba(255,255,255,0.05)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            border: '1px solid rgba(255,255,255,0.05)'
-                        }}>
-                            <ChevronDown size={24} color="#333" style={{ transform: 'rotate(180deg)' }} />
+                        <div
+                            onClick={() => scrollToSection('up')}
+                            style={{
+                                width: '50px',
+                                height: '50px',
+                                borderRadius: '50%',
+                                background: 'rgba(0, 194, 255, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                border: '1px solid rgba(0, 194, 255, 0.2)',
+                                backdropFilter: 'blur(10px)',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'rgba(0, 194, 255, 0.2)';
+                                e.currentTarget.style.borderColor = '#00c2ff';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'rgba(0, 194, 255, 0.1)';
+                                e.currentTarget.style.borderColor = 'rgba(0, 194, 255, 0.2)';
+                            }}
+                        >
+                            <ChevronDown size={24} color="#00c2ff" style={{ transform: 'rotate(180deg)' }} />
                         </div>
-                        <div style={{
-                            width: '45px',
-                            height: '45px',
-                            borderRadius: '50%',
-                            background: 'rgba(255,255,255,0.05)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            border: '1px solid rgba(255,255,255,0.05)'
-                        }}>
-                            <ChevronDown size={24} color="#666" />
+                        <div
+                            onClick={() => scrollToSection('down')}
+                            style={{
+                                width: '50px',
+                                height: '50px',
+                                borderRadius: '50%',
+                                background: 'rgba(0, 194, 255, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                border: '1px solid rgba(0, 194, 255, 0.2)',
+                                backdropFilter: 'blur(10px)',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'rgba(0, 194, 255, 0.2)';
+                                e.currentTarget.style.borderColor = '#00c2ff';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'rgba(0, 194, 255, 0.1)';
+                                e.currentTarget.style.borderColor = 'rgba(0, 194, 255, 0.2)';
+                            }}
+                        >
+                            <ChevronDown size={24} color="#00c2ff" />
                         </div>
                     </div>
                 </div>

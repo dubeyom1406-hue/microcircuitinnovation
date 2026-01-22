@@ -29,6 +29,30 @@ const CaseStudy = () => {
             description: "Reducing verification cycle by 40% using advanced formal property checking.",
             date: "20th Jan 2026",
             pdfUrl: "#"
+        },
+        {
+            id: 4,
+            category: "Expertise",
+            title: "Low Power Design for IoT SOC",
+            description: "Implementing advanced power gating techniques.",
+            date: "22nd Jan 2026",
+            pdfUrl: "#"
+        },
+        {
+            id: 5,
+            category: "DFT",
+            title: "LBIST Implementation for Safety-Critical Designs",
+            description: "Achieving high diagnostic coverage.",
+            date: "24th Jan 2026",
+            pdfUrl: "#"
+        },
+        {
+            id: 6,
+            category: "Physical Design",
+            title: "P&R for Multi-Million Gate Design",
+            description: "Handling congestion and timing closure.",
+            date: "26th Jan 2026",
+            pdfUrl: "#"
         }
     ];
     const [sortBy, setSortBy] = useState('Newest');
@@ -48,9 +72,27 @@ const CaseStudy = () => {
         return () => clearTimeout(timer);
     }, []);
 
+    const scrollToSection = (direction) => {
+        const sections = ['hero-section', 'studies-section'];
+        const currentPos = window.scrollY;
+
+        const sectionOffsets = sections.map(id => {
+            const el = document.getElementById(id);
+            return el ? el.offsetTop : 0;
+        });
+
+        if (direction === 'down') {
+            const next = sectionOffsets.find(offset => offset > currentPos + 50);
+            if (next !== undefined) window.scrollTo({ top: next, behavior: 'smooth' });
+        } else {
+            const prev = [...sectionOffsets].reverse().find(offset => offset < currentPos - 50);
+            if (prev !== undefined) window.scrollTo({ top: prev, behavior: 'smooth' });
+        }
+    };
+
     // Use all studies without pre-sorting since we'll sort during pagination
     const allStudies = contextStudies || [];
-    
+
     // Sort studies based on current sort order
     const sortedStudies = allStudies.sort((a, b) => {
         if (sortBy === 'Newest') {
@@ -59,7 +101,7 @@ const CaseStudy = () => {
             return new Date(a.date.replace(/(\d+)(st|nd|rd|th)/, '$1')) - new Date(b.date.replace(/(\d+)(st|nd|rd|th)/, '$1'));
         }
     });
-    
+
     // Pagination logic
     const totalPages = Math.ceil(sortedStudies.length / studiesPerPage);
     const indexOfLastStudy = currentPage * studiesPerPage;
@@ -109,7 +151,7 @@ const CaseStudy = () => {
                     // FINAL CONTENT STATE
                     <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '5rem 1rem 2rem' }}>
                         {/* Hero Section */}
-                        <header style={{ textAlign: 'center', marginBottom: '3rem', position: 'relative' }}>
+                        <header id="hero-section" style={{ textAlign: 'center', marginBottom: '3rem', position: 'relative' }}>
                             <motion.div
                                 layoutId="hero-text"
                                 transition={{ duration: 1.2, ease: [0.43, 0.13, 0.23, 0.96] }}
@@ -169,15 +211,15 @@ const CaseStudy = () => {
                                             }}
                                         >
                                             <span>{sortBy === 'Newest' ? 'Newest' : 'Oldest'}</span>
-                                            <ChevronDown 
-                                                size={16} 
-                                                style={{ 
+                                            <ChevronDown
+                                                size={16}
+                                                style={{
                                                     transform: isSortOpen ? 'rotate(180deg)' : 'none',
                                                     transition: 'transform 0.3s ease'
-                                                }} 
+                                                }}
                                             />
                                         </button>
-                                        
+
                                         {isSortOpen && (
                                             <div style={{
                                                 position: 'absolute',
@@ -248,100 +290,100 @@ const CaseStudy = () => {
                             </div>
 
                             {/* Grid */}
-                            <div style={{
+                            <div id="studies-section" style={{
                                 display: 'grid',
                                 gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
                                 gap: '1rem',
                                 marginBottom: '2rem'
                             }}>
                                 {studies.map((study, index) => (
-                                        <motion.div
-                                            key={index}
-                                            initial={{ opacity: 0, y: 50 }}
-                                            whileInView={{ opacity: 1, y: 0 }}
-                                            transition={{ duration: 0.6, ease: "easeOut" }}
-                                            viewport={{ once: false, amount: 0.2 }}
+                                    <motion.div
+                                        key={index}
+                                        initial={{ opacity: 0, y: 50 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.6, ease: "easeOut" }}
+                                        viewport={{ once: false, amount: 0.2 }}
+                                        style={{
+                                            background: 'linear-gradient(180deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.95) 100%)',
+                                            borderRadius: '24px',
+                                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                                            padding: '3rem 2rem 5rem 2rem',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            textAlign: 'center',
+                                            backdropFilter: 'blur(10px)',
+                                            position: 'relative',
+                                            minHeight: '380px',
+                                            overflow: 'hidden',
+                                            boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
+                                        }}
+                                    >
+                                        {/* Glass highlight effect at top */}
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: '15%',
+                                            right: '15%',
+                                            height: '1px',
+                                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)'
+                                        }} />
+
+                                        <p style={{
+                                            fontSize: '0.85rem',
+                                            color: '#ccc',
+                                            marginBottom: '1.5rem',
+                                            fontWeight: 500,
+                                            letterSpacing: '0.5px'
+                                        }}>
+                                            {study.category}
+                                        </p>
+
+                                        <h3 style={{
+                                            fontSize: '1.8rem',
+                                            fontWeight: 700,
+                                            lineHeight: 1.25,
+                                            marginBottom: '1rem',
+                                            color: '#fff',
+                                            flex: 1,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            {study.title}
+                                        </h3>
+
+                                        <p style={{ fontSize: '0.8rem', color: '#888', margin: '0 0 2rem', fontWeight: 500 }}>
+                                            {study.date}
+                                        </p>
+
+                                        {/* Download Button */}
+                                        <motion.button
+                                            whileHover={{ height: '55px' }}
                                             style={{
-                                                background: 'linear-gradient(180deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.95) 100%)',
-                                                borderRadius: '24px',
-                                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                padding: '3rem 2rem 5rem 2rem',
+                                                height: '48px',
+                                                background: 'linear-gradient(90deg, #0076fe 0%, #0056b1 100%)',
+                                                position: 'absolute',
+                                                bottom: 0,
+                                                left: 0,
+                                                right: 0,
+                                                width: '100%',
+                                                borderRadius: '0 0 24px 24px',
+                                                border: 'none',
+                                                color: '#fff',
+                                                fontWeight: 600,
+                                                fontSize: '1rem',
+                                                cursor: 'pointer',
                                                 display: 'flex',
-                                                flexDirection: 'column',
                                                 alignItems: 'center',
-                                                textAlign: 'center',
-                                                backdropFilter: 'blur(10px)',
-                                                position: 'relative',
-                                                minHeight: '380px',
-                                                overflow: 'hidden',
-                                                boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
+                                                justifyContent: 'center',
+                                                transition: 'height 0.3s ease'
                                             }}
                                         >
-                                            {/* Glass highlight effect at top */}
-                                            <div style={{
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: '15%',
-                                                right: '15%',
-                                                height: '1px',
-                                                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)'
-                                            }} />
-
-                                            <p style={{
-                                                fontSize: '0.85rem',
-                                                color: '#ccc',
-                                                marginBottom: '1.5rem',
-                                                fontWeight: 500,
-                                                letterSpacing: '0.5px'
-                                            }}>
-                                                {study.category}
-                                            </p>
-
-                                            <h3 style={{
-                                                fontSize: '1.8rem',
-                                                fontWeight: 700,
-                                                lineHeight: 1.25,
-                                                marginBottom: '1rem',
-                                                color: '#fff',
-                                                flex: 1,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center'
-                                            }}>
-                                                {study.title}
-                                            </h3>
-
-                                            <p style={{ fontSize: '0.8rem', color: '#888', margin: '0 0 2rem', fontWeight: 500 }}>
-                                                {study.date}
-                                            </p>
-
-                                            {/* Download Button */}
-                                            <motion.button
-                                                whileHover={{ height: '55px' }}
-                                                style={{
-                                                    height: '48px',
-                                                    background: 'linear-gradient(90deg, #0076fe 0%, #0056b1 100%)',
-                                                    position: 'absolute',
-                                                    bottom: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    width: '100%',
-                                                    borderRadius: '0 0 24px 24px',
-                                                    border: 'none',
-                                                    color: '#fff',
-                                                    fontWeight: 600,
-                                                    fontSize: '1rem',
-                                                    cursor: 'pointer',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    transition: 'height 0.3s ease'
-                                                }}
-                                            >
-                                                Download
-                                            </motion.button>
-                                        </motion.div>
-                                    ))}
+                                            Download
+                                        </motion.button>
+                                    </motion.div>
+                                ))}
                             </div>
 
                             {/* Functional Pagination */}
@@ -374,14 +416,14 @@ const CaseStudy = () => {
                                 >
                                     Previous
                                 </button>
-                                
+
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                     <span style={{ color: '#00c2ff' }}>{indexOfFirstStudy + 1}-</span>
                                     <span>{Math.min(indexOfLastStudy, sortedStudies.length)}</span>
                                     <span style={{ margin: '0 10px', color: '#444' }}>of</span>
                                     <span>{sortedStudies.length}</span>
                                 </div>
-                                
+
                                 <button
                                     onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                     disabled={currentPage === totalPages}
@@ -412,6 +454,70 @@ const CaseStudy = () => {
                                 </button>
                             </div>
                         </motion.div>
+
+                        {/* Down/Up arrows */}
+                        <div style={{
+                            position: 'fixed',
+                            bottom: '2rem',
+                            right: '2rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '0.8rem',
+                            zIndex: 100
+                        }}>
+                            <div
+                                onClick={() => scrollToSection('up')}
+                                style={{
+                                    width: '50px',
+                                    height: '50px',
+                                    borderRadius: '50%',
+                                    background: 'rgba(0, 194, 255, 0.1)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    border: '1px solid rgba(0, 194, 255, 0.2)',
+                                    backdropFilter: 'blur(10px)',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = 'rgba(0, 194, 255, 0.2)';
+                                    e.currentTarget.style.borderColor = '#00c2ff';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'rgba(0, 194, 255, 0.1)';
+                                    e.currentTarget.style.borderColor = 'rgba(0, 194, 255, 0.2)';
+                                }}
+                            >
+                                <ChevronDown size={24} color="#00c2ff" style={{ transform: 'rotate(180deg)' }} />
+                            </div>
+                            <div
+                                onClick={() => scrollToSection('down')}
+                                style={{
+                                    width: '50px',
+                                    height: '50px',
+                                    borderRadius: '50%',
+                                    background: 'rgba(0, 194, 255, 0.1)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    border: '1px solid rgba(0, 194, 255, 0.2)',
+                                    backdropFilter: 'blur(10px)',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = 'rgba(0, 194, 255, 0.2)';
+                                    e.currentTarget.style.borderColor = '#00c2ff';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'rgba(0, 194, 255, 0.1)';
+                                    e.currentTarget.style.borderColor = 'rgba(0, 194, 255, 0.2)';
+                                }}
+                            >
+                                <ChevronDown size={24} color="#00c2ff" />
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
