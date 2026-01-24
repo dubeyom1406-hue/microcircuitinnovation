@@ -3,6 +3,7 @@ import { useLoading } from './LoadingContext';
 import { auth, db } from '../lib/firebase';
 import {
     signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
     signOut,
     onAuthStateChanged
 } from 'firebase/auth';
@@ -137,20 +138,23 @@ export const AdminProvider = ({ children }) => {
 
 
     const loginAdmin = async (username, password) => {
-        // NOTE: Firebase uses email/password. 
-        // If the user inputs a username (e.g. 'admin'), we might need to map it to a fake email 
-        // or just ask the user to input the email.
-        // For backwards compatibility, assuming 'username' is an email if it contains '@'.
-        // If it's just 'admin', we'll hardcode the admin email.
-
         const email = username.includes('@') ? username : 'admin@microcircuits.com';
-
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            return true;
+            return { success: true };
         } catch (error) {
             console.error('Login error:', error);
-            return false;
+            return { success: false, error: error.code };
+        }
+    };
+
+    const registerAdmin = async (email, password) => {
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            return { success: true };
+        } catch (error) {
+            console.error('Registration error:', error);
+            return { success: false, error: error.message };
         }
     };
 
@@ -259,7 +263,7 @@ export const AdminProvider = ({ children }) => {
 
     return (
         <AdminContext.Provider value={{
-            user, isAdmin, loginAdmin, logoutAdmin,
+            user, isAdmin, loginAdmin, logoutAdmin, registerAdmin,
             vacancies, addVacancy, updateVacancy, deleteVacancy,
             caseStudies, addCaseStudy, updateCaseStudy, deleteCaseStudy,
             applications, addApplication, deleteApplication,

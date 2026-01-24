@@ -16,11 +16,12 @@ const AdminLogin = () => {
         setError('');
         setIsSubmitting(true);
 
-        const success = await loginAdmin(username, password);
-        if (success) {
+        const result = await loginAdmin(username, password);
+
+        if (result.success) {
             navigate('/admin/dashboard');
         } else {
-            setError('Invalid credentials');
+            setError('Invalid credentials. Please try again.');
         }
         setIsSubmitting(false);
     };
@@ -59,12 +60,14 @@ const AdminLogin = () => {
                     }}>
                         Admin <span style={{ color: '#00c2ff' }}>Portal</span>
                     </h2>
-                    <p style={{ color: '#666', fontSize: '0.9rem' }}>Enter credentials to manage content</p>
+                    <p style={{ color: '#666', fontSize: '0.9rem' }}>
+                        Enter credentials to manage content
+                    </p>
                 </div>
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ color: '#aaa', fontSize: '0.85rem', marginLeft: '10px' }}>Username</label>
+                        <label style={{ color: '#aaa', fontSize: '0.85rem', marginLeft: '10px' }}>Username / Email</label>
                         <input
                             type="text"
                             value={username}
@@ -114,7 +117,7 @@ const AdminLogin = () => {
                             boxShadow: '0 10px 20px rgba(0, 194, 255, 0.2)'
                         }}
                     >
-                        {isSubmitting ? 'Verifying...' : 'Login'}
+                        {isSubmitting ? 'Processing...' : 'Login'}
                     </button>
                 </form>
 
