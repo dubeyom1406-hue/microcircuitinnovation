@@ -1,15 +1,78 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
+// Helper Components
+const IconBox = ({ label, path, rect, rects, circle, circle2, rect1, rect2, cx, cy, r }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '48px', height: '48px', color: '#fff', opacity: 0.9 }}>
+            {path && <path d={path} />}
+            {circle && <circle cx={circle.cx} cy={circle.cy} r={circle.r} />}
+            {circle2 && <circle cx={circle2.cx} cy={circle2.cy} r={circle2.r} />}
+            {rect1 && <rect x={rect1.x} y={rect1.y} width={rect1.w} height={rect1.h} rx={rect1.rx} />}
+            {rect2 && <rect x={rect2.x} y={rect2.y} width={rect2.w} height={rect2.h} rx={rect2.rx} />}
+            {cx && <circle cx={cx} cy={cy} r={r} />}
+            {/* Hardcoded extras for specific icons */}
+            {label === 'Automotive' && <circle cx="17" cy="17" r="2" />}
+            {rect && <rect x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={rect.rx} />}
+            {rects && rects.map((rc, i) => <rect key={i} x={rc.x} y={rc.y} width={rc.w} height={rc.h} rx={rc.rx} />)}
+        </svg>
+        <span style={{ fontSize: '0.8rem', color: '#666', fontWeight: 500, textTransform: 'uppercase' }}>{label}</span>
+    </div>
+);
+
+const StatCard = ({ number, subtitle, desc, btnText, link, navigate }) => (
+    <motion.div
+        initial={{ y: 50, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        style={{
+            flex: '1 1 300px',
+            maxWidth: '420px',
+            background: '#080808',
+            border: '1px solid #333',
+            borderRadius: '35px',
+            padding: '45px 30px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            textAlign: 'left'
+        }}
+    >
+        <h4 style={{ fontSize: '4.5rem', marginBottom: '10px', fontWeight: 800, color: '#00c2ff', lineHeight: 1 }}>{number}</h4>
+        <h5 style={{ fontSize: '1.8rem', marginBottom: '25px', color: '#fff', fontWeight: 700 }}>{subtitle}</h5>
+        <p style={{ fontSize: '1rem', color: '#ccc', lineHeight: 1.6, marginBottom: 'auto' }}>{desc}</p>
+        <button
+            onClick={() => navigate(link)}
+            style={{
+                marginTop: '40px',
+                background: '#0056b3',
+                color: '#fff',
+                padding: '12px 30px',
+                borderRadius: '25px',
+                border: 'none',
+                fontWeight: 600,
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                transition: '0.3s'
+            }}
+            onMouseEnter={(e) => { e.target.style.background = '#007bff'; }}
+            onMouseLeave={(e) => { e.target.style.background = '#0056b3'; }}
+        >
+            {btnText}
+        </button>
+    </motion.div>
+);
+
 const About = () => {
     const navigate = useNavigate();
-    const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+    const [isMobile, setIsMobile] = useState(false);
 
     // Scroll to top on mount
     useEffect(() => {
         window.scrollTo(0, 0);
         const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        handleResize(); // Initialize correct value
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
@@ -21,11 +84,21 @@ const About = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="about-page mobile-full-width"
-            style={{ background: '#000', color: '#fff', overflowX: 'hidden', width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}
+            style={{
+                background: '#000',
+                color: '#fff',
+                overflowX: 'hidden',
+                width: '100%',
+                maxWidth: '100vw',
+                boxSizing: 'border-box',
+                minHeight: '100vh', // Ensure full height always
+                position: 'relative',
+                zIndex: 10
+            }}
         >
 
             {/* Close Button Container */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px', paddingTop: '120px' }}>
                 <button
                     onClick={() => navigate('/')}
                     style={{
@@ -55,7 +128,7 @@ const About = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
-                style={{ textAlign: 'center', padding: '40px 15px' }}
+                style={{ textAlign: 'center', padding: '0 15px 40px 15px' }}
             >
                 <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 5.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '20px' }}>
                     <span style={{ color: '#fff' }}>Commit.</span> <span style={{ color: '#00aaff' }}>Together</span>
@@ -184,67 +257,5 @@ const About = () => {
         </motion.div>
     );
 };
-
-// Helper Components
-const IconBox = ({ label, path, rect, rects, circle, circle2, rect1, rect2, cx, cy, r }) => (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '48px', height: '48px', color: '#fff', opacity: 0.9 }}>
-            {path && <path d={path} />}
-            {circle && <circle cx={circle.cx} cy={circle.cy} r={circle.r} />}
-            {circle2 && <circle cx={circle2.cx} cy={circle2.cy} r={circle2.r} />}
-            {rect1 && <rect x={rect1.x} y={rect1.y} width={rect1.w} height={rect1.h} rx={rect1.rx} />}
-            {rect2 && <rect x={rect2.x} y={rect2.y} width={rect2.w} height={rect2.h} rx={rect2.rx} />}
-            {cx && <circle cx={cx} cy={cy} r={r} />}
-            {/* Hardcoded extras for specific icons */}
-            {label === 'Automotive' && <circle cx="17" cy="17" r="2" />}
-            {rect && <rect x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={rect.rx} />}
-            {rects && rects.map((rc, i) => <rect key={i} x={rc.x} y={rc.y} width={rc.w} height={rc.h} rx={rc.rx} />)}
-        </svg>
-        <span style={{ fontSize: '0.8rem', color: '#666', fontWeight: 500, textTransform: 'uppercase' }}>{label}</span>
-    </div>
-);
-
-const StatCard = ({ number, subtitle, desc, btnText, link, navigate }) => (
-    <motion.div
-        initial={{ y: 50, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        style={{
-            flex: '1 1 300px',
-            maxWidth: '420px',
-            background: '#080808',
-            border: '1px solid #333',
-            borderRadius: '35px',
-            padding: '45px 30px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            textAlign: 'left'
-        }}
-    >
-        <h4 style={{ fontSize: '4.5rem', marginBottom: '10px', fontWeight: 800, color: '#00c2ff', lineHeight: 1 }}>{number}</h4>
-        <h5 style={{ fontSize: '1.8rem', marginBottom: '25px', color: '#fff', fontWeight: 700 }}>{subtitle}</h5>
-        <p style={{ fontSize: '1rem', color: '#ccc', lineHeight: 1.6, marginBottom: 'auto' }}>{desc}</p>
-        <button
-            onClick={() => navigate(link)}
-            style={{
-                marginTop: '40px',
-                background: '#0056b3',
-                color: '#fff',
-                padding: '12px 30px',
-                borderRadius: '25px',
-                border: 'none',
-                fontWeight: 600,
-                cursor: 'pointer',
-                fontSize: '0.9rem',
-                transition: '0.3s'
-            }}
-            onMouseEnter={(e) => { e.target.style.background = '#007bff'; }}
-            onMouseLeave={(e) => { e.target.style.background = '#0056b3'; }}
-        >
-            {btnText}
-        </button>
-    </motion.div>
-);
 
 export default About;

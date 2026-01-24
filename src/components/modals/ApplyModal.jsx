@@ -52,7 +52,7 @@ const ApplyModal = ({ isOpen, onClose, jobTitle }) => {
                     formDataToSend.append('resume', selectedFile);
                 }
 
-                const response = await fetch('/api/applications', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/applications`, {
                     method: 'POST',
                     body: formDataToSend
                 });

@@ -22,7 +22,7 @@ const AddVacancy = () => {
         setMessage({ type: '', text: '' });
 
         try {
-            const response = await fetch('/api/vacancies', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/vacancies`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
