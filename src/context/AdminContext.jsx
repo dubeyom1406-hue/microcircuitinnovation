@@ -33,6 +33,7 @@ export const AdminProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
             setIsAdmin(!!currentUser);
+            setLoading(false);
         });
         return () => unsubscribe();
     }, []);

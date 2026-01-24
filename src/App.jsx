@@ -46,7 +46,13 @@ const InitialLoaderManager = () => {
 const AppContent = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [globalLoading, setGlobalLoading] = React.useState(true);
+    const [globalLoading, setGlobalLoading] = React.useState(!location.pathname.startsWith('/admin'));
+
+    React.useEffect(() => {
+        if (location.pathname.startsWith('/admin')) {
+            setGlobalLoading(false);
+        }
+    }, [location.pathname]);
 
     return (
         <div className="App">
