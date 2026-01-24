@@ -1,0 +1,159 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import Navbar from './components/navigation/Navbar';
+import Home from './pages/public/Home';
+import Expertise from './pages/public/Expertise';
+import Careers from './pages/public/Careers';
+import CaseStudy from './pages/public/CaseStudy';
+import Contact from './pages/public/Contact';
+import About from './pages/public/About';
+import { AnimatePresence } from 'framer-motion';
+import { AuthProvider } from './context/AuthContext';
+import { AdminProvider } from './context/AdminContext';
+import './index.css';
+import './App.css';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminLayout from './components/admin/AdminLayout';
+import ManageVacancies from './pages/admin/ManageVacancies';
+import ManageCaseStudies from './pages/admin/ManageCaseStudies';
+import ApplicationsList from './pages/admin/ApplicationsList';
+import ContactMessagesList from './pages/admin/ContactMessagesList';
+import AddCaseStudy from './pages/admin/AddCaseStudy';
+import AddVacancy from './pages/admin/AddVacancy';
+import ManageLayout from './pages/admin/ManageLayout';
+import CustomCursor from './components/common/CustomCursor';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import IntroLoader from './components/common/IntroLoader';
+import InfiniteLogoPreloader from './components/common/InfiniteLogoPreloader';
+import { LoadingProvider, useLoading } from './context/LoadingContext';
+
+const InitialLoaderManager = () => {
+    const { startLoading, stopLoading } = useLoading();
+
+    React.useEffect(() => {
+        // Initial load simulation (2s)
+        startLoading();
+        const timer = setTimeout(() => {
+            stopLoading();
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    return <InfiniteLogoPreloader />;
+};
+
+const AppContent = () => {
+    const location = useLocation();
+
+    return (
+        <div className="App">
+            <Navbar />
+            <main>
+                <AnimatePresence mode="wait">
+                    <Routes location={location} key={location.pathname}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/expertise" element={<Expertise />} />
+                        <Route path="/casestudy" element={<CaseStudy />} />
+                        <Route path="/careers" element={<Careers />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+
+                        {/* Admin Routes */}
+                        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+                        <Route path="/admin/login" element={<AdminLogin />} />
+
+                        <Route path="/admin/dashboard" element={
+                            <ProtectedRoute>
+                                <AdminLayout>
+                                    <AdminDashboard />
+                                </AdminLayout>
+                            </ProtectedRoute>
+                        } />
+
+                        <Route path="/admin/vacancies" element={
+                            <ProtectedRoute>
+                                <AdminLayout>
+                                    <ManageVacancies />
+                                </AdminLayout>
+                            </ProtectedRoute>
+                        } />
+
+                        <Route path="/admin/add-vacancy" element={
+                            <ProtectedRoute>
+                                <AdminLayout>
+                                    <AddVacancy />
+                                </AdminLayout>
+                            </ProtectedRoute>
+                        } />
+
+                        <Route path="/admin/case-studies" element={
+                            <ProtectedRoute>
+                                <AdminLayout>
+                                    <ManageCaseStudies />
+                                </AdminLayout>
+                            </ProtectedRoute>
+                        } />
+
+                        <Route path="/admin/add-case-study" element={
+                            <ProtectedRoute>
+                                <AdminLayout>
+                                    <AddCaseStudy />
+                                </AdminLayout>
+                            </ProtectedRoute>
+                        } />
+
+                        <Route path="/admin/applications" element={
+                            <ProtectedRoute>
+                                <AdminLayout>
+                                    <ApplicationsList />
+                                </AdminLayout>
+                            </ProtectedRoute>
+                        } />
+
+                        <Route path="/admin/inquiries" element={
+                            <ProtectedRoute>
+                                <AdminLayout>
+                                    <ContactMessagesList />
+                                </AdminLayout>
+                            </ProtectedRoute>
+                        } />
+
+                        <Route path="/admin/layout" element={
+                            <ProtectedRoute>
+                                <AdminLayout>
+                                    <ManageLayout />
+                                </AdminLayout>
+                            </ProtectedRoute>
+                        } />
+
+                        <Route path="*" element={<Expertise />} />
+                    </Routes>
+                </AnimatePresence>
+            </main>
+            <footer style={{ padding: '4rem 2rem', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)', marginTop: '4rem' }}>
+                <p style={{ color: '#666', fontSize: '0.9rem' }}>Copyright © 2025 MicroCircuits Innovations Pvt. Ltd. All rights reserved.</p>
+            </footer>
+        </div>
+    );
+};
+
+function App() {
+    return (
+        <Router>
+            <AuthProvider>
+                <LoadingProvider>
+                    <AdminProvider>
+                        <div>
+                            <InitialLoaderManager />
+                            <CustomCursor />
+                            <AppContent />
+                        </div>
+                    </AdminProvider>
+                </LoadingProvider>
+            </AuthProvider>
+        </Router>
+    );
+}
+
+export default App;
