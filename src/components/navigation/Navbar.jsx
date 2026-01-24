@@ -44,7 +44,7 @@ const Navbar = () => {
             top: 0,
             left: 0,
             right: 0,
-            zIndex: 1000,
+            zIndex: 3000,
             pointerEvents: 'none',
             width: '100%',
             height: isMobile ? '80px' : '110px',
@@ -62,7 +62,7 @@ const Navbar = () => {
             {!isMobile && (
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <motion.header
-                        initial={{ y: -50, opacity: 0 }}
+                        initial={{ y: -120, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{
                             delay: location.pathname === '/' ? 10 : 0, // 10s delay on Home page
