@@ -7,11 +7,12 @@ const Home = () => {
     const [subPhase, setSubPhase] = useState(0);
     const [blueFill, setBlueFill] = useState(false);
     const [yellowFill, setYellowFill] = useState(false);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [isMobile, setIsMobile] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
+        handleResize(); // Check immediately on mount
         window.addEventListener('resize', handleResize);
 
         const timers = [
