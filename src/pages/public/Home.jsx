@@ -125,26 +125,46 @@ const Home = () => {
                                         className="flex flex-col items-center text-center w-full"
                                     >
                                         <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4 mb-8">
-                                            <motion.span
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                className="text-3xl md:text-6xl font-medium text-white"
-                                            >
-                                                Design.
-                                            </motion.span>
+
+                                            {/* Design: Outside to Inside, then Hides */}
+                                            {subPhase < 1 && (
+                                                <motion.span
+                                                    key="design"
+                                                    initial={{ opacity: 0, scale: 3 }} // Outside (Large)
+                                                    animate={{ opacity: 1, scale: 1 }} // Inside (Normal)
+                                                    exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+                                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                                    className="text-3xl md:text-6xl font-medium text-white"
+                                                >
+                                                    Design.
+                                                </motion.span>
+                                            )}
+
+                                            {/* Great: Appears in Design's position */}
                                             {subPhase >= 1 && (
                                                 <motion.span
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1, color: "#00c2ff" }}
+                                                    key="great"
+                                                    initial={{ opacity: 0, scale: 0.8 }}
+                                                    animate={{ opacity: 1, color: "#00c2ff", scale: 1 }}
+                                                    transition={{ duration: 0.5 }}
                                                     className="text-3xl md:text-6xl font-medium"
                                                 >
                                                     Great.
                                                 </motion.span>
                                             )}
+
+                                            {/* Engineering: Inside to Outside */}
                                             {subPhase >= 2 && (
                                                 <motion.span
-                                                    initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
-                                                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                                    key="engineering"
+                                                    initial={{ opacity: 0, scale: 0 }} // Inside (Small)
+                                                    animate={{ opacity: 1, scale: 1 }} // Outside (Normal)
+                                                    transition={{
+                                                        type: "spring",
+                                                        stiffness: 200,
+                                                        damping: 15,
+                                                        duration: 0.8
+                                                    }}
                                                     className="text-3xl md:text-6xl font-medium text-white"
                                                 >
                                                     Engineering
