@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 
-// Helper Components
 const IconBox = ({ label, path, rect, rects, circle, circle2, rect1, rect2, cx, cy, r }) => (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '48px', height: '48px', color: '#fff', opacity: 0.9 }}>
@@ -12,7 +10,6 @@ const IconBox = ({ label, path, rect, rects, circle, circle2, rect1, rect2, cx, 
             {rect1 && <rect x={rect1.x} y={rect1.y} width={rect1.w} height={rect1.h} rx={rect1.rx} />}
             {rect2 && <rect x={rect2.x} y={rect2.y} width={rect2.w} height={rect2.h} rx={rect2.rx} />}
             {cx && <circle cx={cx} cy={cy} r={r} />}
-            {/* Hardcoded extras for specific icons */}
             {label === 'Automotive' && <circle cx="17" cy="17" r="2" />}
             {rect && <rect x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={rect.rx} />}
             {rects && rects.map((rc, i) => <rect key={i} x={rc.x} y={rc.y} width={rc.w} height={rc.h} rx={rc.rx} />)}
@@ -22,10 +19,7 @@ const IconBox = ({ label, path, rect, rects, circle, circle2, rect1, rect2, cx, 
 );
 
 const StatCard = ({ number, subtitle, desc, btnText, link, navigate }) => (
-    <motion.div
-        initial={{ y: 50, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
+    <div
         style={{
             flex: '1 1 300px',
             maxWidth: '420px',
@@ -61,28 +55,23 @@ const StatCard = ({ number, subtitle, desc, btnText, link, navigate }) => (
         >
             {btnText}
         </button>
-    </motion.div>
+    </div>
 );
 
 const About = () => {
     const navigate = useNavigate();
     const [isMobile, setIsMobile] = useState(false);
 
-    // Scroll to top on mount
     useEffect(() => {
         window.scrollTo(0, 0);
         const handleResize = () => setIsMobile(window.innerWidth < 1024);
-        handleResize(); // Initialize correct value
+        handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+        <div
             className="about-page mobile-full-width"
             style={{
                 background: '#000',
@@ -91,9 +80,11 @@ const About = () => {
                 width: '100%',
                 maxWidth: '100vw',
                 boxSizing: 'border-box',
-                minHeight: '100vh', // Ensure full height always
+                minHeight: '100vh',
                 position: 'relative',
-                zIndex: 10
+                zIndex: 10,
+                opacity: 1, // FORCE VISIBILITY
+                display: 'block' // FORCE DISPLAY
             }}
         >
 
@@ -113,8 +104,6 @@ const About = () => {
                         cursor: 'pointer',
                         transition: 'all 0.3s'
                     }}
-                    onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
-                    onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.05)'}
                 >
                     <svg viewBox="0 0 24 24" width="24" height="24" stroke="white" strokeWidth="2.5" fill="none">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -124,27 +113,17 @@ const About = () => {
             </div>
 
             {/* Hero Section */}
-            <motion.section
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                style={{ textAlign: 'center', padding: '0 15px 40px 15px' }}
-            >
+            <div style={{ textAlign: 'center', padding: '0 15px 40px 15px' }}>
                 <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 5.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '20px' }}>
                     <span style={{ color: '#fff' }}>Commit.</span> <span style={{ color: '#00aaff' }}>Together</span>
                 </h1>
                 <p style={{ fontSize: 'clamp(1.2rem, 3vw, 2.22rem)', fontWeight: 600, color: '#fff' }}>
                     Building Trust at every Milestone — from <span style={{ color: '#00aaff' }}>Spec to Silicon.</span>
                 </p>
-            </motion.section>
+            </div>
 
             {/* Mission Section */}
-            <motion.section
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                style={{ padding: '80px 20px', textAlign: 'center', maxWidth: '1000px', margin: '0 auto' }}
-            >
+            <div style={{ padding: '80px 20px', textAlign: 'center', maxWidth: '1000px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: 'clamp(1.2rem, 3vw, 2rem)', color: '#fff', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
                     At <img src="/logo_large.png" alt="MIPL" style={{ height: '30px', width: 'auto', borderRadius: '4px' }} /> MicroCircuits Innovations, We Began with <span style={{ color: '#00aaff' }}>One Mission:</span>
                 </h2>
@@ -162,25 +141,20 @@ const About = () => {
                 <h4 style={{ fontSize: '2.5rem', fontWeight: 700, color: '#00aaff' }}>
                     "We Help Shape the Future"
                 </h4>
-            </motion.section>
+            </div>
 
             {/* Spec To Silicon Card */}
-            <motion.section
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                style={{
-                    background: '#080808',
-                    border: '3px solid #333',
-                    borderRadius: '35px',
-                    padding: '45px 30px',
-                    textAlign: 'center',
-                    width: '90%',
-                    maxWidth: '650px',
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
-                    margin: '0 auto 80px auto'
-                }}
-            >
+            <div style={{
+                background: '#080808',
+                border: '3px solid #333',
+                borderRadius: '35px',
+                padding: '45px 30px',
+                textAlign: 'center',
+                width: '90%',
+                maxWidth: '650px',
+                boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
+                margin: '0 auto 80px auto'
+            }}>
                 <h3 style={{ fontSize: '2.2rem', marginBottom: '40px', fontWeight: 700 }}>Spec. To <span style={{ color: '#00aaff' }}>Silicon.</span></h3>
 
                 <div style={{
@@ -216,10 +190,10 @@ const About = () => {
                 >
                     View Our Expertise
                 </button>
-            </motion.section>
+            </div>
 
             {/* Stats Grid */}
-            <section style={{
+            <div style={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 justifyContent: 'center',
@@ -253,8 +227,8 @@ const About = () => {
                     link="/casestudy"
                     navigate={navigate}
                 />
-            </section>
-        </motion.div>
+            </div>
+        </div>
     );
 };
 
