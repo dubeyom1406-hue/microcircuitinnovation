@@ -124,52 +124,56 @@ const Home = () => {
                                         transition={{ duration: 0.8 }}
                                         className="flex flex-col items-center text-center w-full"
                                     >
-                                        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4 mb-8">
+                                        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4 mb-8 h-[80px] relative">
+                                            <AnimatePresence mode="popLayout">
+                                                {/* Design: Appears then Disappears */}
+                                                {subPhase < 2 && (
+                                                    <motion.span
+                                                        key="design"
+                                                        layout
+                                                        initial={{ opacity: 0, scale: 0 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        exit={{ opacity: 0, scale: 0, transition: { duration: 0.5 } }}
+                                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                                        className="text-3xl md:text-6xl font-medium text-white origin-center"
+                                                    >
+                                                        Design.
+                                                    </motion.span>
+                                                )}
 
-                                            {/* Design: Outside to Inside, then Hides */}
-                                            {subPhase < 1 && (
-                                                <motion.span
-                                                    key="design"
-                                                    initial={{ opacity: 0, scale: 3 }} // Outside (Large)
-                                                    animate={{ opacity: 1, scale: 1 }} // Inside (Normal)
-                                                    exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-                                                    transition={{ duration: 0.8, ease: "easeOut" }}
-                                                    className="text-3xl md:text-6xl font-medium text-white"
-                                                >
-                                                    Design.
-                                                </motion.span>
-                                            )}
+                                                {/* Great: Appears next to Design, then slides to take its place */}
+                                                {subPhase >= 1 && (
+                                                    <motion.span
+                                                        key="great"
+                                                        layout
+                                                        initial={{ opacity: 0, scale: 0.8, x: 20 }}
+                                                        animate={{ opacity: 1, color: "#00c2ff", scale: 1, x: 0 }}
+                                                        transition={{ duration: 0.5, layout: { duration: 0.5 } }}
+                                                        className="text-3xl md:text-6xl font-medium origin-center"
+                                                    >
+                                                        Great.
+                                                    </motion.span>
+                                                )}
 
-                                            {/* Great: Appears in Design's position */}
-                                            {subPhase >= 1 && (
-                                                <motion.span
-                                                    key="great"
-                                                    initial={{ opacity: 0, scale: 0.8 }}
-                                                    animate={{ opacity: 1, color: "#00c2ff", scale: 1 }}
-                                                    transition={{ duration: 0.5 }}
-                                                    className="text-3xl md:text-6xl font-medium"
-                                                >
-                                                    Great.
-                                                </motion.span>
-                                            )}
-
-                                            {/* Engineering: Inside to Outside */}
-                                            {subPhase >= 2 && (
-                                                <motion.span
-                                                    key="engineering"
-                                                    initial={{ opacity: 0, scale: 0 }} // Inside (Small)
-                                                    animate={{ opacity: 1, scale: 1 }} // Outside (Normal)
-                                                    transition={{
-                                                        type: "spring",
-                                                        stiffness: 200,
-                                                        damping: 15,
-                                                        duration: 0.8
-                                                    }}
-                                                    className="text-3xl md:text-6xl font-medium text-white"
-                                                >
-                                                    Engineering
-                                                </motion.span>
-                                            )}
+                                                {/* Engineering: Appears in Great's old spot (implied by flow) */}
+                                                {subPhase >= 2 && (
+                                                    <motion.span
+                                                        key="engineering"
+                                                        layout
+                                                        initial={{ opacity: 0, scale: 0 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        transition={{
+                                                            type: "spring",
+                                                            stiffness: 200,
+                                                            damping: 15,
+                                                            duration: 0.8
+                                                        }}
+                                                        className="text-3xl md:text-6xl font-medium text-white origin-center"
+                                                    >
+                                                        Engineering
+                                                    </motion.span>
+                                                )}
+                                            </AnimatePresence>
                                         </div>
                                         <div className="min-h-[80px] flex items-center justify-center px-4">
                                             {subPhase >= 2 && (
