@@ -96,23 +96,28 @@ const Home = () => {
                             />
                         </motion.div>
 
+
+                        {/* Brand Text Animation: Center to Top-Right */}
+                        {phase >= 2 && (
+                            <motion.div
+                                initial={{ top: "50%", right: "50%", x: "50%", y: "-50%", scale: 1 }}
+                                animate={
+                                    phase >= 3
+                                        ? { top: isMobile ? "2rem" : "3rem", right: isMobile ? "2rem" : "3rem", x: "0%", y: "0%", scale: isMobile ? 0.3 : 0.25 }
+                                        : { top: "50%", right: "50%", x: "50%", y: "-50%", scale: 1 }
+                                }
+                                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                                style={{ position: 'absolute', zIndex: 110, display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none', transformOrigin: 'top right' }}
+                            >
+                                <h1 className="text-4xl md:text-7xl font-bold text-white tracking-tight leading-none mb-1 md:mb-4">MicroCircuits</h1>
+                                <h1 className="text-2xl md:text-5xl font-bold text-[#b0bebe] tracking-tight leading-none">Innovations</h1>
+                            </motion.div>
+                        )}
+
                         {/* Absolute Centered Text Container */}
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-6">
                             <AnimatePresence mode="wait">
-                                {/* Phase 2: MIPL Text */}
-                                {phase === 2 && (
-                                    <motion.div
-                                        key="phase2"
-                                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                                        exit={{ opacity: 0, scale: 1.1, y: -20 }}
-                                        transition={{ duration: 0.8 }}
-                                        className="flex flex-col items-center text-center"
-                                    >
-                                        <h1 className="text-4xl md:text-7xl font-bold text-white tracking-tight leading-none mb-4">MicroCircuits</h1>
-                                        <h1 className="text-2xl md:text-5xl font-bold text-[#b0bebe] tracking-tight leading-none">Innovations</h1>
-                                    </motion.div>
-                                )}
+                                {/* Phase 2 removed from sequential flow to allow persistent animation */}
 
                                 {/* Phase 3: Design. Great. Engineering. */}
                                 {phase === 3 && (

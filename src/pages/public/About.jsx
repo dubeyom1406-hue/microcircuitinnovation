@@ -204,7 +204,7 @@ const About = () => {
                 padding: '0 20px'
             }}>
                 <StatCard
-                    number="20+"
+                    number="100+"
                     subtitle="Years Experience"
                     desc="Decades of Experience in Analog, Mixed-Signal, and Digital Design — Scaling from 180nm to 1.8nm."
                     btnText="View CaseStudy"
@@ -212,7 +212,7 @@ const About = () => {
                     navigate={navigate}
                 />
                 <StatCard
-                    number="100+"
+                    number="25+"
                     subtitle="Customers"
                     desc="Trusted by Global OEMs and Tier-1s — Delivering Precision Silicon at Massive Scale, Year after Year."
                     btnText="Connect With Us"
@@ -220,7 +220,7 @@ const About = () => {
                     navigate={navigate}
                 />
                 <StatCard
-                    number="50+"
+                    number="40+"
                     subtitle="First Pass Silicon"
                     desc="Custom Silicon Solutions Deployed Across AMS, Signal Processing, and Power Management."
                     btnText="View CaseStudy"

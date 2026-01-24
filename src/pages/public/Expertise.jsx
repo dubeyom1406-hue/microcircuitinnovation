@@ -363,9 +363,12 @@ const Expertise = ({ onNavigate }) => {
                                         <h3 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 600, color: '#aaa', marginBottom: '8px' }}>
                                             DV Signoff
                                         </h3>
-                                        <h3 style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 700, color: '#fff', marginBottom: '2rem', lineHeight: 1 }}>
+                                        <h3 style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem', lineHeight: 1 }}>
                                             Completed
                                         </h3>
+                                        <p style={{ fontSize: '1.1rem', color: '#ccc', fontWeight: 500, marginBottom: '2rem' }}>
+                                            5+ First Pass Silicon
+                                        </p>
 
                                         <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 3rem 0', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                             {[
@@ -804,7 +807,7 @@ const Expertise = ({ onNavigate }) => {
                                                     <div style={{ minWidth: '20px', height: '20px', borderRadius: '50%', background: '#007bff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '3px' }}>
                                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                                     </div>
-                                                    30+ First Pass Silicon with Billion Gates
+                                                    25+ First Pass Silicon with Billion Gates
                                                 </li>
                                                 <li style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', color: '#ccc', fontSize: '1rem', lineHeight: 1.4 }}>
                                                     <div style={{ minWidth: '20px', height: '20px', borderRadius: '50%', background: '#007bff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '3px' }}>
