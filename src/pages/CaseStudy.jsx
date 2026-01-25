@@ -51,6 +51,13 @@ const CaseStudy = () => {
 
     // Sort studies based on current sort order
     const sortedStudies = allStudies.sort((a, b) => {
+        // Prefer createdAt for sorting
+        if (a.createdAt && b.createdAt) {
+            const timeA = new Date(a.createdAt).getTime();
+            const timeB = new Date(b.createdAt).getTime();
+            return sortBy === 'Newest' ? timeB - timeA : timeA - timeB;
+        }
+
         // Helper function to parse date string
         const parseDate = (dateStr) => {
             try {
@@ -59,8 +66,7 @@ const CaseStudy = () => {
                 return new Date(cleanDate);
             } catch (e) {
                 console.warn('Date parsing error:', e);
-                // If parsing fails, return a default date
-                return new Date(0); // Epoch time for invalid dates
+                return new Date(0);
             }
         };
 

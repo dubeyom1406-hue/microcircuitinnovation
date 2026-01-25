@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SuccessModal from '../../components/common/SuccessModal';
-
+import { useAdmin } from '../../context/AdminContext';
 
 const Contact = () => {
-    // const { addContactMessage } = useAdmin(); // Removed Admin Context
+    const { addContactMessage } = useAdmin();
 
     const [formData, setFormData] = useState({
         name: '',
@@ -15,6 +15,7 @@ const Contact = () => {
     });
 
     const [submitted, setSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,21 +27,10 @@ const Contact = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/contacts`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to submit message');
-            }
-
+            await addContactMessage(formData);
             setSubmitted(true);
 
             // Reset form
@@ -54,6 +44,8 @@ const Contact = () => {
         } catch (error) {
             console.error('Submission error:', error);
             alert(error.message || 'Failed to submit message. Please try again.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 

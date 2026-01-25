@@ -202,13 +202,34 @@ export const AdminProvider = ({ children }) => {
     };
 
     // --- CRUD Operations ---
-
     const addVacancy = async (vacancyData) => {
         try {
-            const docRef = await addDoc(collection(db, 'vacancies'), vacancyData);
-            setVacancies(prev => [...prev, { id: docRef.id, ...vacancyData }]);
+            console.log("Attempting to add vacancy to Firestore...", vacancyData);
+            if (!db) throw new Error("Firestore (db) is not initialized. Check your Firebase config.");
+
+            const dataWithMeta = {
+                ...vacancyData,
+                createdAt: new Date().toISOString(),
+                date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+            };
+
+            // Timeout after 10 seconds if Firestore doesn't respond
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Firestore write timed out. Check your internet or Firestore rules.")), 10000)
+            );
+
+            const docRef = await Promise.race([
+                addDoc(collection(db, 'vacancies'), dataWithMeta),
+                timeoutPromise
+            ]);
+
+            const newVacancy = { id: docRef.id, ...dataWithMeta };
+            setVacancies(prev => [...prev, newVacancy]);
+            console.log("Vacancy added successfully with ID:", docRef.id);
+            return newVacancy;
         } catch (error) {
-            console.error('Error adding vacancy:', error);
+            console.error('FIRESTORE ERROR (addVacancy):', error);
+            throw error;
         }
     };
 
@@ -217,8 +238,10 @@ export const AdminProvider = ({ children }) => {
             const vacancyRef = doc(db, 'vacancies', id);
             await updateDoc(vacancyRef, updatedData);
             setVacancies(prev => prev.map(v => v.id === id ? { ...v, ...updatedData } : v));
+            console.log("Vacancy updated successfully:", id);
         } catch (error) {
             console.error('Error updating vacancy:', error);
+            throw error;
         }
     };
 
@@ -226,17 +249,41 @@ export const AdminProvider = ({ children }) => {
         try {
             await deleteDoc(doc(db, 'vacancies', id));
             setVacancies(prev => prev.filter(v => v.id !== id));
+            console.log("Vacancy deleted successfully:", id);
         } catch (error) {
             console.error('Error deleting vacancy:', error);
+            throw error;
         }
     };
 
     const addCaseStudy = async (studyData) => {
         try {
-            const docRef = await addDoc(collection(db, 'caseStudies'), studyData);
-            setCaseStudies(prev => [...prev, { id: docRef.id, ...studyData }]);
+            console.log("Attempting to add case study to Firestore...", studyData);
+            if (!db) throw new Error("Firestore (db) is not initialized. Check your Firebase config.");
+
+            const dataWithMeta = {
+                ...studyData,
+                createdAt: new Date().toISOString(),
+                date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+            };
+
+            // Timeout after 10 seconds if Firestore doesn't respond
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Firestore write timed out. Check your internet or Firestore rules.")), 10000)
+            );
+
+            const docRef = await Promise.race([
+                addDoc(collection(db, 'caseStudies'), dataWithMeta),
+                timeoutPromise
+            ]);
+
+            const newStudy = { id: docRef.id, ...dataWithMeta };
+            setCaseStudies(prev => [...prev, newStudy]);
+            console.log("Case study added successfully with ID:", docRef.id);
+            return newStudy;
         } catch (error) {
-            console.error('Error adding case study:', error);
+            console.error('FIRESTORE ERROR (addCaseStudy):', error);
+            throw error;
         }
     };
 
@@ -245,8 +292,10 @@ export const AdminProvider = ({ children }) => {
             const studyRef = doc(db, 'caseStudies', id);
             await updateDoc(studyRef, updatedData);
             setCaseStudies(prev => prev.map(s => s.id === id ? { ...s, ...updatedData } : s));
+            console.log("Case study updated successfully:", id);
         } catch (error) {
             console.error('Error updating case study:', error);
+            throw error;
         }
     };
 
@@ -254,17 +303,26 @@ export const AdminProvider = ({ children }) => {
         try {
             await deleteDoc(doc(db, 'caseStudies', id));
             setCaseStudies(prev => prev.filter(s => s.id !== id));
+            console.log("Case study deleted successfully:", id);
         } catch (error) {
             console.error('Error deleting case study:', error);
+            throw error;
         }
     };
 
     const addApplication = async (appData) => {
         try {
-            const docRef = await addDoc(collection(db, 'applications'), appData);
-            setApplications(prev => [...prev, { id: docRef.id, ...appData }]);
+            console.log("Submitting application to Firestore...", appData);
+            const dataWithMeta = {
+                ...appData,
+                createdAt: new Date().toISOString()
+            };
+            const docRef = await addDoc(collection(db, 'applications'), dataWithMeta);
+            setApplications(prev => [...prev, { id: docRef.id, ...dataWithMeta }]);
+            return docRef.id;
         } catch (error) {
             console.error('Error adding application:', error);
+            throw error;
         }
     };
 
@@ -274,15 +332,23 @@ export const AdminProvider = ({ children }) => {
             setApplications(prev => prev.filter(a => a.id !== id));
         } catch (error) {
             console.error('Error deleting application:', error);
+            throw error;
         }
     };
 
     const addContactMessage = async (messageData) => {
         try {
-            const docRef = await addDoc(collection(db, 'contacts'), messageData);
-            setContactMessages(prev => [...prev, { id: docRef.id, ...messageData }]);
+            console.log("Submitting contact message to Firestore...", messageData);
+            const dataWithMeta = {
+                ...messageData,
+                createdAt: new Date().toISOString()
+            };
+            const docRef = await addDoc(collection(db, 'contacts'), dataWithMeta);
+            setContactMessages(prev => [...prev, { id: docRef.id, ...dataWithMeta }]);
+            return docRef.id;
         } catch (error) {
             console.error('Error adding contact message:', error);
+            throw error;
         }
     };
 
@@ -292,6 +358,7 @@ export const AdminProvider = ({ children }) => {
             setContactMessages(prev => prev.filter(m => m.id !== id));
         } catch (error) {
             console.error('Error deleting contact message:', error);
+            throw error;
         }
     };
 

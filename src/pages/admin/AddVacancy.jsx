@@ -27,7 +27,8 @@ const AddVacancy = () => {
             setFormData({ title: '', exp: '', location: '', description: '' });
             setTimeout(() => navigate('/admin/dashboard'), 2000);
         } catch (error) {
-            setMessage({ type: 'error', text: 'Failed to post vacancy' });
+            console.error("Submit Error:", error);
+            setMessage({ type: 'error', text: `Failed to post: ${error.message || 'Unknown error'}` });
         } finally {
             setIsSubmitting(false);
         }

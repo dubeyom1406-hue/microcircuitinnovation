@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle2 } from 'lucide-react';
-
 import LoadingOverlay from '../common/LoadingOverlay';
 import SuccessModal from '../common/SuccessModal';
+import { useAdmin } from '../../context/AdminContext';
 
 const ApplyModal = ({ isOpen, onClose, jobTitle }) => {
-    // const { addApplication } = useAdmin(); // Removed Admin Context
+    const { addApplication } = useAdmin();
 
     const [formData, setFormData] = useState({
         name: '',
@@ -42,25 +42,13 @@ const ApplyModal = ({ isOpen, onClose, jobTitle }) => {
             setIsLoading(true);
 
             try {
-                const formDataToSend = new FormData();
-                formDataToSend.append('name', formData.name);
-                formDataToSend.append('email', formData.email);
-                formDataToSend.append('phone', formData.phone);
-                formDataToSend.append('message', formData.message);
-                formDataToSend.append('jobTitle', jobTitle);
-                if (selectedFile) {
-                    formDataToSend.append('resume', selectedFile);
-                }
-
-                const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/applications`, {
-                    method: 'POST',
-                    body: formDataToSend
+                // Since we don't have Firebase Storage set up right now, 
+                // we'll just save the application details to Firestore.
+                await addApplication({
+                    ...formData,
+                    jobTitle,
+                    appliedAt: new Date().toISOString()
                 });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to submit application');
-                }
 
                 setIsSubmitted(true);
             } catch (error) {
