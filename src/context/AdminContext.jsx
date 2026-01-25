@@ -368,7 +368,7 @@ export const AdminProvider = ({ children }) => {
 
     return (
         <AdminContext.Provider value={{
-            user, isAdmin, loginAdmin, logoutAdmin, registerAdmin, dismissLoading,
+            user, isAdmin, loginAdmin, logoutAdmin, registerAdmin,
             vacancies, addVacancy, updateVacancy, deleteVacancy,
             caseStudies, addCaseStudy, updateCaseStudy, deleteCaseStudy,
             applications, addApplication, deleteApplication,
