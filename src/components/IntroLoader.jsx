@@ -258,7 +258,7 @@ const IntroLoader = ({ onComplete }) => {
                             <motion.div
                                 animate={{ y: phase >= 10 ? -40 : 0 }}
                                 transition={{ duration: 0.8, ease: "easeInOut" }}
-                                className="flex space-x-4 md:space-x-8"
+                                className="flex space-x-8 md:space-x-16"
                             >
                                 <motion.span
                                     initial={{ opacity: 0, y: 20 }}

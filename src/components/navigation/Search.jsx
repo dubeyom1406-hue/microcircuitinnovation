@@ -124,7 +124,7 @@ const Search = ({ isOpen, onClose }) => {
                             <input
                                 ref={inputRef}
                                 type="text"
-                                placeholder="Search everything... (e.g. DFT, physical design, chips)"
+                                placeholder="Search..."
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={(e) => {
@@ -238,7 +238,7 @@ const Search = ({ isOpen, onClose }) => {
                                 )
                             ) : (
                                 <div style={{ textAlign: 'center', color: '#444', padding: '3rem', fontSize: '1rem' }}>
-                                    Search for case studies, pages, or technical expertise...
+                                    Search...
                                 </div>
                             )}
                         </div>

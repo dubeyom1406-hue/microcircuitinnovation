@@ -206,7 +206,7 @@ const IntroLoader = ({ onComplete }) => {
                                                 filter: phase >= 8 ? "blur(10px)" : "blur(0px)"
                                             }}
                                             transition={{ opacity: { duration: 0.8, ease: "easeInOut" }, y: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }, filter: { duration: 0.8 } }}
-                                            className="flex space-x-4 md:space-x-12"
+                                            className="flex space-x-8 md:space-x-20"
                                         >
                                             {["Design.", "Develop.", "Deliver."].map((word, i) => (
                                                 <motion.span

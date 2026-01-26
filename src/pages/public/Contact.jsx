@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SuccessModal from '../../components/common/SuccessModal';
 import { useAdmin } from '../../context/AdminContext';
 
 const Contact = () => {
     const { addContactMessage } = useAdmin();
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -80,7 +87,7 @@ const Contact = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="contact-page mobile-full-width"
-            style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '5rem 1rem 2rem', background: '#000', fontFamily: '"Outfit", sans-serif', width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}
+            style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: isMobile ? 'flex-start' : 'center', alignItems: 'center', padding: isMobile ? '14rem 1.5rem 2rem' : '5rem 1rem 2rem', background: '#000', fontFamily: '"Outfit", sans-serif', width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}
         >
             <motion.div
                 initial={{ opacity: 0, y: 30 }}

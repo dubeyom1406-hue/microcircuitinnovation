@@ -162,13 +162,13 @@ const Careers = () => {
                 <div key="careers-content">
                     {/* Slide 1: Join a team */}
                     <section id="hero-section" style={{
-                        height: '100vh',
+                        height: '65vh',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
                         textAlign: 'center',
-                        padding: '0 1rem',
+                        padding: isMobile ? '12rem 1rem 0' : '8rem 1rem 0', // Significant gap from header
                         position: 'relative'
                     }}>
                         <motion.h1
@@ -182,7 +182,7 @@ const Careers = () => {
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 maxWidth: '1300px',
-                                margin: isMobile ? '0 auto 1.5rem' : '0 auto 3rem',
+                                margin: '0 auto 1.5rem',
                                 letterSpacing: '-1px',
                                 padding: isMobile ? '0 1rem' : '0'
                             }}
@@ -220,7 +220,7 @@ const Careers = () => {
 
                     {/* Slide 2: "Role" */}
                     <section id="role-section" style={{
-                        height: '100vh',
+                        height: '30vh',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
@@ -247,8 +247,8 @@ const Careers = () => {
 
                     {/* Slide 3: Jobs Grid */}
                     <section id="jobs-section" style={{
-                        minHeight: isMobile ? 'auto' : '100vh',
-                        padding: isMobile ? '4rem 1rem' : '4rem 1rem'
+                        minHeight: isMobile ? 'auto' : 'auto',
+                        padding: isMobile ? '2rem 1rem' : '2rem 1rem'
                     }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '3rem', gap: '1.5rem' }}>
                             <h3 style={{ fontSize: '2.5rem', fontWeight: 600, margin: 0 }}>
@@ -345,6 +345,7 @@ const Careers = () => {
                                         <motion.div
                                             key={job.id || job.title}
                                             whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
                                             className="career-card"
                                             style={{
                                                 background: '#111',
@@ -353,12 +354,14 @@ const Careers = () => {
                                                 position: 'relative',
                                                 display: 'flex',
                                                 flexDirection: 'column',
-                                                overflow: 'hidden'
+                                                overflow: 'hidden',
+                                                border: '1px solid transparent',
+                                                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                                             }}
                                         >
                                             <motion.div
                                                 whileHover={{
-                                                    background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
+                                                    background: 'linear-gradient(135deg, #ff9800 0%, #f44336 100%)',
                                                 }}
                                                 style={{
                                                     background: '#1a1a1a',
@@ -369,7 +372,7 @@ const Careers = () => {
                                                     flexDirection: 'column',
                                                     alignItems: 'center',
                                                     textAlign: 'center',
-                                                    transition: 'background 0.3s ease'
+                                                    transition: 'all 0.3s ease'
                                                 }}
                                             >
                                                 <div style={{ marginBottom: '1.5rem' }}>
