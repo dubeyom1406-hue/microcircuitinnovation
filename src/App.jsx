@@ -52,7 +52,7 @@ const AppContent = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const isPathAdmin = location.pathname.startsWith('/admin');
-    const [globalLoading, setGlobalLoading] = React.useState(!isPathAdmin);
+    const [globalLoading, setGlobalLoading] = React.useState(false); // Debugging: Disable loader
 
     React.useEffect(() => {
         if (isPathAdmin) {
