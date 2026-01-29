@@ -1,5 +1,368 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Briefcase, ChevronDown, MapPin, Clock, ArrowRight, FileText } from 'lucide-react';
+import ApplyModal from '../../components/model/ApplyModal'; // Ensure this path matches your structure
+import { useAdmin } from '../../context/AdminContext';
+
+const Careers = () => {
+    const { vacancies: contextVacancies, loading: adminLoading } = useAdmin();
+    const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedJob, setSelectedJob] = useState('');
+    const [showIntro, setShowIntro] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const jobsPerPage = 8;
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowIntro(false);
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    const scrollToSection = (direction) => {
+        const next = document.getElementById('jobs-section');
+        if (next) next.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const openApplyModal = (jobTitle) => {
+        setSelectedJob(jobTitle);
+        setIsModalOpen(true);
+    };
+
+    // Use context vacancies or fallback data
+    const vacancies = contextVacancies.length > 0 ? contextVacancies : [
+        {
+            id: 1,
+            title: "Senior RTL Design Engineer",
+            location: "Bangalore, India",
+            exp: "5-8 Years",
+            type: "Full Time",
+            description: "Lead the design of next-gen SoC subsystems. Experience with Verilog/SystemVerilog and low-power design techniques required."
+        },
+        {
+            id: 2,
+            title: "Physical Design Lead",
+            location: "Hyderabad, India",
+            exp: "8+ Years",
+            type: "Full Time",
+            description: "Own the block-level P&R, timing closure, and signoff for 3nm/5nm designs. Expertise in Synopsys/Cadence flows."
+        },
+        {
+            id: 3,
+            title: "DFT Engineer",
+            location: "Remote / Hybrid",
+            exp: "3-6 Years",
+            type: "Full Time",
+            description: "Implement and verify scan, MBIST, and JTAG. Knowledge of ATPG and fault simulation is essential."
+        },
+        {
+            id: 4,
+            title: "Analog Mixed Signal Designer",
+            location: "Bangalore, India",
+            exp: "4-7 Years",
+            type: "Full Time",
+            description: "Design high-speed SerDes and PLLs. Strong understanding of FinFET technologies."
+        }
+    ];
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ background: '#000', color: '#fff', minHeight: '100vh', fontFamily: '"Outfit", sans-serif', paddingBottom: '100px' }}
+        >
+            {/* Intro Overlay */}
+            <AnimatePresence>
+                {showIntro && (
+                    <motion.div
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8 }}
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            zIndex: 9999,
+                            background: '#000',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <motion.h1
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 1.2, opacity: 0 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            style={{ fontSize: '4rem', fontWeight: 700, letterSpacing: '-2px' }}
+                        >
+                            Join<span style={{ color: '#00c2ff' }}>Us</span>
+                        </motion.h1>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
+
+                {/* Hero Section */}
+                <section id="hero-section" style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '120px', textAlign: 'center' }}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                    >
+                        <div style={{ display: 'inline-block', padding: '0.5rem 1rem', background: 'rgba(0, 194, 255, 0.1)', borderRadius: '50px', marginBottom: '1.5rem', border: '1px solid rgba(0, 194, 255, 0.2)' }}>
+                            <span style={{ color: '#00c2ff', fontWeight: 600, fontSize: '0.9rem', letterSpacing: '1px' }}>WE ARE HIRING</span>
+                        </div>
+                        <h1 style={{ fontSize: isMobile ? '3rem' : '5rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '1.5rem' }}>
+                            Build the <span style={{ color: '#00c2ff' }}>Silicon</span><br />
+                            That Powers the World.
+                        </h1>
+                        <p style={{ fontSize: '1.2rem', color: '#888', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
+                            Join a team of elite engineers pushing the boundaries of Moore's Law.
+                        </p>
+                    </motion.div>
+
+                    {/* Scroll Down Button */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1.5, duration: 1 }}
+                        style={{ marginTop: '3rem', display: 'flex', justifyContent: 'center' }}
+                        onClick={() => scrollToSection('down')}
+                    >
+                        <div style={arrowCircleStyle}>
+                            <ChevronDown size={24} color="#fff" />
+                        </div>
+                    </motion.div>
+                </section>
+
+                <div id="jobs-section" style={{ padding: '2rem 0', marginBottom: '2rem' }}>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#fff', marginBottom: '2rem' }}>
+                        Open Positions <span style={{ color: '#666', fontSize: '1rem', fontWeight: 400, marginLeft: '10px' }}>({vacancies.length})</span>
+                    </h2>
+                </div>
+
+                {/* --- JOBS GRID --- */}
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                    gap: '2rem',
+                    marginBottom: '6rem'
+                }}>
+                    <AnimatePresence mode='wait'>
+                        {vacancies.map((job, index) => (
+                            <motion.div
+                                key={job.id || index}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ delay: index * 0.1 }}
+                                style={{
+                                    // MATCHING CARD STYLE FROM EXPERTISE & CASE STUDY
+                                    background: 'linear-gradient(180deg, #3c3c3c, #2b2b2b)',
+                                    borderRadius: '18px',
+                                    padding: '35px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between',
+                                    border: '1px solid rgba(255,255,255,0.05)',
+                                    position: 'relative',
+                                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                                    height: '100%',
+                                    minHeight: '380px'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-10px)';
+                                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.4)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                }}
+                            >
+                                <div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '20px' }}>
+                                        <div style={{
+                                            background: 'rgba(0, 194, 255, 0.1)',
+                                            color: '#00c2ff',
+                                            padding: '6px 12px',
+                                            borderRadius: '8px',
+                                            fontSize: '0.8rem',
+                                            fontWeight: 600,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '6px'
+                                        }}>
+                                            <Briefcase size={14} /> {job.type || 'Full Time'}
+                                        </div>
+                                    </div>
+
+                                    <h3 style={{
+                                        fontSize: '26px',
+                                        fontWeight: '700',
+                                        color: '#fff',
+                                        marginBottom: '15px',
+                                        lineHeight: '1.2'
+                                    }}>
+                                        {job.title}
+                                    </h3>
+
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', marginBottom: '25px', color: '#888', fontSize: '0.9rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <MapPin size={16} color="#00c2ff" /> {job.location}
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <Clock size={16} color="#00c2ff" /> {job.exp}
+                                        </div>
+                                    </div>
+
+                                    <p style={{
+                                        color: '#cfcfcf',
+                                        fontSize: '15px',
+                                        lineHeight: '1.6',
+                                        marginBottom: '30px'
+                                    }}>
+                                        {job.description}
+                                    </p>
+                                </div>
+
+                                {/* --- BUTTON STYLE MATCHING EXPERTISE --- */}
+                                <div style={{ display: 'flex', gap: '1rem', width: '100%', marginTop: 'auto' }}>
+                                    <button
+                                        onClick={() => openApplyModal(job.title)}
+                                        style={{
+                                            background: '#0a78ff',
+                                            color: '#fff',
+                                            border: 'none',
+                                            borderRadius: '50px',
+                                            padding: '12px 30px',
+                                            fontSize: '15px',
+                                            fontWeight: '600',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '8px',
+                                            whiteSpace: 'nowrap',
+                                            flex: 1
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                    >
+                                        Apply Now <ArrowRight size={18} />
+                                    </button>
+
+                                    {job.pdfUrl && (
+                                        <a
+                                            href={job.pdfUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                width: '50px',
+                                                height: '50px',
+                                                background: 'rgba(255, 255, 255, 0.05)',
+                                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                borderRadius: '50%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: '#00c2ff',
+                                                transition: 'all 0.3s ease',
+                                                textDecoration: 'none'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.background = 'rgba(0, 194, 255, 0.1)';
+                                                e.currentTarget.style.borderColor = '#00c2ff';
+                                                e.currentTarget.style.transform = 'scale(1.1)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                                                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                                                e.currentTarget.style.transform = 'scale(1)';
+                                            }}
+                                            title="See JD"
+                                        >
+                                            <FileText size={22} />
+                                        </a>
+                                    )}
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </div>
+            </div>
+
+            {/* Application Modal */}
+            <ApplyModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                jobTitle={selectedJob}
+            />
+        </motion.div>
+    );
+};
+
+const arrowCircleStyle = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: 'rgba(255, 255, 255, 0.05)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    transition: 'all 0.3s ease'
+};
+
+export default Careers;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Briefcase, ChevronDown } from 'lucide-react';
 import ApplyModal from '../components/ApplyModal';
 import { useAdmin } from '../context/AdminContext';
@@ -66,6 +429,7 @@ const Careers = () => {
             title: v.title,
             exp: v.exp,
             loc: v.location,
+            pdfUrl: v.pdfUrl,
             date: v.date || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
             featured: v._id === '1' || v.id === 1
         }));
@@ -154,7 +518,7 @@ const Careers = () => {
             ) : (
                 // FINAL STATE: Page Content
                 <div key="careers-content">
-                    {/* Slide 1: Join a team */}
+ //                   { Slide 1: Join a team }
                     <section id="hero-section" style={{
                         height: '65vh',
                         display: 'flex',
@@ -212,7 +576,7 @@ const Careers = () => {
                         </motion.div>
                     </section>
 
-                    {/* Slide 2: "Role" */}
+  //                  { Slide 2: "Role" }
                     <section id="role-section" style={{
                         height: '30vh',
                         display: 'flex',
@@ -239,7 +603,7 @@ const Careers = () => {
                         </motion.h2>
                     </section>
 
-                    {/* Slide 3: Jobs Grid */}
+  //                  { Slide 3: Jobs Grid }
                     <section id="jobs-section" style={{
                         minHeight: isMobile ? 'auto' : 'auto',
                         padding: isMobile ? '2rem 1rem' : '2rem 1rem',
@@ -510,7 +874,7 @@ const Careers = () => {
                         </div>
                     </section>
 
-                    {/* Down/Up arrows */}
+ //                   { Down/Up arrows }
                     <div style={{
                         position: 'fixed',
                         bottom: '2rem',
@@ -580,3 +944,4 @@ const Careers = () => {
 };
 
 export default Careers;
+*/

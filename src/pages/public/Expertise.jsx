@@ -96,35 +96,25 @@ const Expertise = ({ onNavigate }) => {
                 width: '100%'
             }}>
                 <motion.h1
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     style={{
-                        fontSize: isMobile ? '2.5rem' : 'clamp(2rem, 8vw, 4rem)',
+                        fontSize: isMobile ? '2.5rem' : 'clamp(1.5rem, 6vw, 3rem)',
                         fontWeight: 600,
                         letterSpacing: '-1px',
                         lineHeight: 1.1,
-                        marginBottom: '0.5rem',
                         textAlign: 'center',
-                        padding: '0 1rem'
+                        padding: '0 1rem',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                        gap: isMobile ? '0.3rem' : '0.8rem'
                     }}
                 >
                     <motion.span layoutId="word-your">Your</motion.span>{" "}
                     <motion.span layoutId="word-next-chip" style={{ color: '#00c2ff' }}>Next Chip</motion.span>{" "}
-                    <motion.span layoutId="word-starts">Starts</motion.span>
-                </motion.h1>
-                <motion.h1
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.1 }}
-                    style={{
-                        fontSize: isMobile ? '2.5rem' : 'clamp(2rem, 8vw, 4rem)',
-                        fontWeight: 600,
-                        letterSpacing: '-1px',
-                        lineHeight: 1.1,
-                        textAlign: 'center'
-                    }}
-                >
+                    <motion.span layoutId="word-starts">Starts</motion.span>{" "}
                     <motion.span layoutId="word-here">Here</motion.span>
                 </motion.h1>
             </section>
@@ -169,22 +159,21 @@ const Expertise = ({ onNavigate }) => {
                     }
                     .service-card button {
                         position: absolute;
-                        bottom: 28px;
-                        left: 28px;
-                        width: calc(100% - 56px);
-                        background: #0a78ff;
+                        bottom: 0;
+                        left: 0;
+                        width: 100%;
+                        background: linear-gradient(90deg, #0076fe 0%, #0056b1 100%);
                         border: none;
-                        border-radius: 22px;
+                        border-radius: 0 0 18px 18px;
                         color: white;
-                        padding: 10px 0;
-                        font-size: 15px;
+                        height: 48px;
+                        font-size: 16px;
                         font-weight: 600;
                         cursor: pointer;
                         display: flex;
-                        flex-direction: column;
                         align-items: center;
                         justify-content: center;
-                        line-height: 1.2;
+                        transition: height 0.3s ease;
                     }
                     .service-card button span {
                         display: block;
@@ -286,10 +275,11 @@ const Expertise = ({ onNavigate }) => {
                                         }}></div>
                                     </div>
                                 ) : (
-                                    <button>
-                                        Learn
-                                        <span>More</span>
-                                    </button>
+                                    <motion.button
+                                        whileHover={{ height: '55px' }}
+                                    >
+                                        Learn More
+                                    </motion.button>
                                 )}
                             </motion.div>
                         );

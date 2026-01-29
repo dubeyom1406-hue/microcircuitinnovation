@@ -1,5 +1,450 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { useAdmin } from '../../context/AdminContext';
+
+const CaseStudy = () => {
+    // 1. Get Data from Context
+    const { caseStudies: contextStudies } = useAdmin();
+
+    // 2. State Management
+    const [sortBy, setSortBy] = useState('Newest');
+    const [isSortOpen, setIsSortOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const studiesPerPage = 8;
+    const [showIntro, setShowIntro] = useState(true);
+    const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowIntro(false);
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    const scrollToSection = (direction) => {
+        const next = document.getElementById('studies-section');
+        if (next) next.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Data Source
+    const studies = contextStudies && contextStudies.length > 0 ? contextStudies : [
+        {
+            id: 1,
+            title: "5nm Automotive SoC Success",
+            category: "Automotive",
+            date: "2025-01-15",
+            image: "https://images.unsplash.com/photo-1639815188546-c43c240ff4df?q=80&w=2832&auto=format&fit=crop",
+            description: "Achieved first-pass silicon success for a mission-critical ADAS chip using advanced DFT methodologies.",
+            pdfUrl: "#"
+        },
+        {
+            id: 2,
+            title: "HPC Processor Power Optimization",
+            category: "HPC",
+            date: "2024-11-20",
+            image: "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?q=80&w=2940&auto=format&fit=crop",
+            description: "Reduced dynamic power by 30% in a high-performance computing cluster through novel clock gating strategies.",
+            pdfUrl: "#"
+        },
+        {
+            id: 3,
+            title: "AI Accelerator Physical Design",
+            category: "AI/ML",
+            date: "2024-10-05",
+            image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2865&auto=format&fit=crop",
+            description: "Delivered a 350mm² AI training chip at 3nm node, meeting aggressive timing closure targets.",
+            pdfUrl: "#"
+        }
+    ];
+
+    // Sorting
+    const sortedStudies = [...studies].sort((a, b) => {
+        if (sortBy === 'Newest') return new Date(b.date) - new Date(a.date);
+        if (sortBy === 'Oldest') return new Date(a.date) - new Date(b.date);
+        return 0;
+    });
+
+    // Pagination
+    const indexOfLastStudy = currentPage * studiesPerPage;
+    const indexOfFirstStudy = indexOfLastStudy - studiesPerPage;
+    const currentStudies = sortedStudies.slice(indexOfFirstStudy, indexOfLastStudy);
+    const totalPages = Math.ceil(sortedStudies.length / studiesPerPage);
+
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        document.getElementById('studies-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ background: '#000', color: '#fff', minHeight: '100vh', fontFamily: '"Outfit", sans-serif', paddingBottom: '100px' }}
+        >
+            {/* Intro Overlay */}
+            <AnimatePresence>
+                {showIntro && (
+                    <motion.div
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8 }}
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            zIndex: 9999,
+                            background: '#000',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <motion.h1
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 1.2, opacity: 0 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            style={{ fontSize: '4rem', fontWeight: 700, letterSpacing: '-2px' }}
+                        >
+                            Case<span style={{ color: '#00c2ff' }}>Studies</span>
+                        </motion.h1>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
+
+                {/* Hero Section */}
+                <section id="hero-section" style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '120px', textAlign: 'center' }}>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        style={{
+                            fontSize: isMobile ? '2.5rem' : 'clamp(2rem, 8vw, 4rem)',
+                            fontWeight: 600,
+                            letterSpacing: '-1px',
+                            lineHeight: 1.1,
+                            marginBottom: '0.5rem'
+                        }}
+                    >
+                        Proven Results. <span style={{ color: '#00c2ff' }}>Silicon Success.</span>
+                    </motion.h1>
+                    <p style={{ fontSize: '1.2rem', color: '#888', maxWidth: '600px', margin: '1rem auto', lineHeight: 1.6 }}>
+                        Explore how we help global semiconductor leaders overcome their toughest design challenges.
+                    </p>
+
+                    {/* Scroll Down Button */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1.5, duration: 1 }}
+                        style={{ marginTop: '3rem', display: 'flex', justifyContent: 'center' }}
+                        onClick={() => scrollToSection('down')}
+                    >
+                        <div style={arrowCircleStyle}>
+                            <ChevronDown size={24} color="#fff" />
+                        </div>
+                    </motion.div>
+                </section>
+
+                {/* Filter & Sort Bar */}
+                <div id="studies-section" style={{ padding: '2rem 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div style={{ fontSize: '1.1rem', color: '#888' }}>
+                        Showing <span style={{ color: '#fff', fontWeight: 600 }}>{currentStudies.length}</span> of <span style={{ color: '#fff', fontWeight: 600 }}>{sortedStudies.length}</span> case studies
+                    </div>
+
+                    <div style={{ position: 'relative' }}>
+                        <button
+                            onClick={() => setIsSortOpen(!isSortOpen)}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                background: 'transparent',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                padding: '0.6rem 1.2rem',
+                                borderRadius: '8px',
+                                color: '#fff',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Sort by: {sortBy} <ChevronDown size={16} />
+                        </button>
+
+                        <AnimatePresence>
+                            {isSortOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 10 }}
+                                    style={{
+                                        position: 'absolute',
+                                        right: 0,
+                                        top: '110%',
+                                        background: '#1a1a1a',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '12px',
+                                        width: '150px',
+                                        zIndex: 10,
+                                        overflow: 'hidden'
+                                    }}
+                                >
+                                    {['Newest', 'Oldest'].map(option => (
+                                        <div
+                                            key={option}
+                                            onClick={() => { setSortBy(option); setIsSortOpen(false); }}
+                                            style={{
+                                                padding: '0.8rem 1rem',
+                                                cursor: 'pointer',
+                                                color: sortBy === option ? '#00c2ff' : '#fff',
+                                                background: sortBy === option ? 'rgba(0, 194, 255, 0.05)' : 'transparent',
+                                                transition: 'background 0.2s'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                                            onMouseLeave={(e) => e.target.style.background = sortBy === option ? 'rgba(0, 194, 255, 0.05)' : 'transparent'}
+                                        >
+                                            {option}
+                                        </div>
+                                    ))}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </div>
+
+                {/* --- CARD GRID --- */}
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                    gap: '2rem',
+                    marginBottom: '4rem'
+                }}>
+                    <AnimatePresence mode='wait'>
+                        {currentStudies.map((study, index) => (
+                            <motion.div
+                                key={study.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ delay: index * 0.1 }}
+                                style={{
+                                    background: 'linear-gradient(180deg, #3c3c3c, #2b2b2b)',
+                                    borderRadius: '18px',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    height: '100%',
+                                    position: 'relative',
+                                    cursor: 'pointer',
+                                    border: '1px solid rgba(255,255,255,0.05)',
+                                    transition: 'transform 0.3s ease',
+                                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                            >
+                                {/* Image Section */}
+                                <div style={{ height: '220px', overflow: 'hidden', position: 'relative' }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '1rem',
+                                        left: '1rem',
+                                        background: 'rgba(0,0,0,0.6)',
+                                        backdropFilter: 'blur(4px)',
+                                        padding: '0.4rem 0.8rem',
+                                        borderRadius: '6px',
+                                        fontSize: '0.8rem',
+                                        color: '#fff',
+                                        zIndex: 2,
+                                        border: '1px solid rgba(255,255,255,0.1)'
+                                    }}>
+                                        {study.category}
+                                    </div>
+                                    <img
+                                        src={study.image || "https://images.unsplash.com/photo-1639815188546-c43c240ff4df?q=80&w=2832&auto=format&fit=crop"}
+                                        alt={study.title}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        onError={(e) => e.target.src = "https://images.unsplash.com/photo-1639815188546-c43c240ff4df?q=80&w=2832&auto=format&fit=crop"}
+                                    />
+                                </div>
+
+                                {/* Content Section */}
+                                <div style={{ padding: '28px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                    <div style={{ fontSize: '0.85rem', color: '#aaa', marginBottom: '0.5rem' }}>
+                                        {new Date(study.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                                    </div>
+                                    <h3 style={{
+                                        fontSize: '26px',
+                                        fontWeight: '700',
+                                        marginBottom: '14px',
+                                        lineHeight: '1.2',
+                                        color: '#fff'
+                                    }}>
+                                        {study.title}
+                                    </h3>
+                                    <p style={{
+                                        color: '#cfcfcf',
+                                        fontSize: '15px',
+                                        marginBottom: '30px',
+                                        flex: 1,
+                                        lineHeight: 1.5
+                                    }}>
+                                        {study.description}
+                                    </p>
+
+                                    {/* --- FIX: DIRECT LINK (No Script Blocking) --- */}
+                                    <a
+                                        href={study.pdfUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            background: '#0a78ff',
+                                            color: '#fff',
+                                            border: 'none',
+                                            borderRadius: '50px',
+                                            padding: '12px 24px',
+                                            fontSize: '15px',
+                                            fontWeight: '600',
+                                            textDecoration: 'none', // Remove link underline
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '8px',
+                                            whiteSpace: 'nowrap',
+                                            width: 'fit-content',
+                                            alignSelf: 'flex-start'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                    >
+                                        Download PDF <Download size={18} />
+                                    </a>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '6rem' }}>
+                        <div
+                            onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+                            style={{
+                                width: '50px',
+                                height: '50px',
+                                borderRadius: '50%',
+                                background: currentPage > 1 ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: currentPage > 1 ? 'pointer' : 'default',
+                                opacity: currentPage > 1 ? 1 : 0.5,
+                                transition: 'all 0.3s ease'
+                            }}
+                        >
+                            <ChevronLeft size={24} color="#fff" />
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem', fontWeight: 600 }}>
+                            <span style={{ color: '#00c2ff' }}>{currentPage}</span> / <span style={{ color: '#666' }}>{totalPages}</span>
+                        </div>
+
+                        <div
+                            onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+                            style={{
+                                width: '50px',
+                                height: '50px',
+                                borderRadius: '50%',
+                                background: currentPage < totalPages ? 'rgba(0, 194, 255, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: currentPage < totalPages ? 'pointer' : 'default',
+                                border: currentPage < totalPages ? '1px solid rgba(0, 194, 255, 0.2)' : 'none',
+                                backdropFilter: 'blur(10px)',
+                                transition: 'all 0.3s ease',
+                                opacity: currentPage < totalPages ? 1 : 0.5
+                            }}
+                            onMouseEnter={(e) => {
+                                if (currentPage < totalPages) {
+                                    e.currentTarget.style.background = 'rgba(0, 194, 255, 0.2)';
+                                    e.currentTarget.style.borderColor = '#00c2ff';
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (currentPage < totalPages) {
+                                    e.currentTarget.style.background = 'rgba(0, 194, 255, 0.1)';
+                                    e.currentTarget.style.borderColor = 'rgba(0, 194, 255, 0.2)';
+                                }
+                            }}
+                        >
+                            <ChevronRight size={24} color={currentPage < totalPages ? "#00c2ff" : "#fff"} />
+                        </div>
+                    </div>
+                )}
+            </div>
+        </motion.div>
+    );
+};
+
+const arrowCircleStyle = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: 'rgba(255, 255, 255, 0.05)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    transition: 'all 0.3s ease'
+};
+
+export default CaseStudy;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 
@@ -124,7 +569,7 @@ const CaseStudy = () => {
         >
             <div className="container mobile-responsive-padding" style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
-                {/* ... (keep Intro AnimatePresence) */}
+    //             {... (keep Intro AnimatePresence) }
                 <AnimatePresence mode="popLayout">
                     {showIntro && (
                         <motion.div
@@ -163,7 +608,7 @@ const CaseStudy = () => {
                 ) : (
                     // FINAL CONTENT STATE
                     <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '5rem 1rem 2rem' }}>
-                        {/* ... (Keep Header) */}
+  //                      { ... (Keep Header) }
                         <header id="hero-section" style={{ textAlign: 'center', marginBottom: '3rem', position: 'relative' }}>
                             <motion.div
                                 layoutId="hero-text"
@@ -184,7 +629,7 @@ const CaseStudy = () => {
                                 </h1>
                             </motion.div>
 
-                            {/* Sort Section */}
+  //                          { Sort Section }
                             <div style={{ position: 'relative', width: '100%', marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
                             </div>
                         </header>
@@ -194,7 +639,7 @@ const CaseStudy = () => {
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5, duration: 0.8 }}
                         >
-                            {/* ... (Keep Sort Row) */}
+   //                         { ... (Keep Sort Row) }
                             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem', position: 'relative', width: '100%' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#888' }}>
                                     <span style={{ fontSize: '1rem', fontWeight: 500 }}>Sort By:</span>
@@ -304,7 +749,7 @@ const CaseStudy = () => {
                                 </div>
                             </div>
 
-                            {/* Grid with Animation */}
+   //                         { Grid with Animation }
                             <div style={{ position: 'relative', minHeight: '400px', overflow: 'hidden' }}>
                                 <AnimatePresence initial={false} custom={direction} mode="wait">
                                     <motion.div
@@ -352,7 +797,7 @@ const CaseStudy = () => {
                                                     boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
                                                 }}
                                             >
-                                                {/* Glass highlight effect at top */}
+     //                                           { Glass highlight effect at top }
                                                 <div style={{
                                                     position: 'absolute',
                                                     top: 0,
@@ -390,27 +835,26 @@ const CaseStudy = () => {
                                                     {study.date}
                                                 </p>
 
-                                                {/* Download Button */}
+    //                                            { Download Button }
                                                 <motion.button
                                                     whileHover={{ height: '55px' }}
                                                     style={{
-                                                        height: '48px',
-                                                        background: 'linear-gradient(90deg, #0076fe 0%, #0056b1 100%)',
-                                                        position: 'absolute',
-                                                        bottom: 0,
-                                                        left: 0,
-                                                        right: 0,
-                                                        width: '100%',
-                                                        borderRadius: '0 0 24px 24px',
-                                                        border: 'none',
+                                                        background: '#007bff', // Standard Blue
                                                         color: '#fff',
-                                                        fontWeight: 600,
+                                                        border: 'none',
+                                                        padding: '0.8rem 2rem', // Increased horizontal padding
+                                                        borderRadius: '30px',
                                                         fontSize: '1rem',
+                                                        fontWeight: '600',
                                                         cursor: 'pointer',
                                                         display: 'flex',
                                                         alignItems: 'center',
+                                                        gap: '0.5rem',
+                                                        marginTop: '2rem',
                                                         justifyContent: 'center',
-                                                        transition: 'height 0.3s ease'
+                                                        whiteSpace: 'nowrap',   // Forces text to stay on one line
+                                                        width: 'fit-content',   // Allows button to grow with text
+                                                        minWidth: '150px'
                                                     }}
                                                 >
                                                     Download
@@ -421,7 +865,7 @@ const CaseStudy = () => {
                                 </AnimatePresence>
                             </div>
 
-                            {/* Functional Pagination */}
+  //                          { Functional Pagination }
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '3rem', color: '#666', fontSize: '1.2rem', fontWeight: 500 }}>
                                 <button
                                     onClick={() => paginate(-1)}
@@ -490,7 +934,7 @@ const CaseStudy = () => {
                             </div>
                         </motion.div>
 
-                        {/* Down/Up arrows */}
+    //                    { Down/Up arrows }
                         <div style={{
                             position: 'fixed',
                             bottom: '2rem',
@@ -574,3 +1018,4 @@ const arrowCircleStyle = {
 };
 
 export default CaseStudy;
+*/

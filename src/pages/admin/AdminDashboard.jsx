@@ -15,7 +15,7 @@ const AdminDashboard = () => {
     ];
 
     const quickActions = [
-        { title: 'Post Job', path: '/admin/add-vacancy', icon: <Briefcase size={20} />, color: '#00c2ff' },
+        { title: 'Post Job', path: '/admin/add-vacancy', icon: <Briefcase size={20} />, color: '#a855f7' },
         { title: 'New Case Study', path: '/admin/add-case-study', icon: <FileText size={20} />, color: '#a855f7' },
     ];
 

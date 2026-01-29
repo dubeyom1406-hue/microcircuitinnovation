@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, ChevronDown } from 'lucide-react';
+import { Briefcase, ChevronDown, FileText } from 'lucide-react';
 import ApplyModal from '../../components/modals/ApplyModal';
 import { useAdmin } from '../../context/AdminContext';
+import { useUI } from '../../context/UIContext';
 
 const Careers = () => {
     const { vacancies: contextVacancies, loading: adminLoading } = useAdmin();
+    const { showAlert } = useUI();
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
     useEffect(() => {
@@ -66,6 +68,7 @@ const Careers = () => {
             title: v.title,
             exp: v.exp,
             loc: v.location,
+            pdfUrl: v.pdfUrl,
             date: v.date || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
             featured: v._id === '1' || v.id === 1
         }));
@@ -229,16 +232,35 @@ const Careers = () => {
                         background: '#000',
                         padding: '0 1rem'
                     }}>
+                        <motion.span
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            style={{
+                                fontSize: isMobile ? '1.2rem' : 'clamp(1.5rem, 4vw, 2.5rem)',
+                                fontWeight: 700,
+                                color: '#555',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5em',
+                                marginBottom: '2rem',
+                                display: 'block'
+                            }}
+                        >
+                            Find Your <span style={{ color: '#00c2ff' }}>Perfect</span>
+                        </motion.span>
                         <motion.h2
                             initial={{ scale: 0.8, opacity: 0 }}
                             whileInView={{ scale: 1, opacity: 1 }}
                             transition={{ duration: 0.8, ease: "easeOut" }}
                             style={{
-                                fontSize: isMobile ? '3.5rem' : 'clamp(4rem, 10vw, 8rem)',
-                                fontWeight: 800,
+                                fontSize: isMobile ? '4.5rem' : 'clamp(6rem, 15vw, 12rem)',
+                                fontWeight: 900,
                                 margin: 0,
                                 lineHeight: 0.8,
-                                letterSpacing: '-3px'
+                                letterSpacing: '-5px',
+                                background: 'linear-gradient(180deg, #fff 0%, #444 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
                             }}
                         >
                             "Role"
@@ -402,24 +424,64 @@ const Careers = () => {
                                                     {job.date}
                                                 </div>
 
-                                                <button
-                                                    onClick={() => handleApply(job.title)}
-                                                    style={{
-                                                        width: '100%',
-                                                        padding: '0.8rem',
-                                                        background: 'linear-gradient(90deg, #0076fe 0%, #0056b1 100%)',
-                                                        border: 'none',
-                                                        borderRadius: '50px',
-                                                        color: '#fff',
-                                                        fontWeight: 600,
-                                                        fontSize: '0.9rem',
-                                                        cursor: 'pointer',
-                                                        marginTop: 'auto',
-                                                        boxShadow: '0 4px 15px rgba(0, 118, 254, 0.3)'
-                                                    }}
-                                                >
-                                                    Apply Here
-                                                </button>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%', marginTop: 'auto' }}>
+                                                    <button
+                                                        onClick={() => handleApply(job.title)}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '0.8rem',
+                                                            background: 'linear-gradient(90deg, #0076fe 0%, #0056b1 100%)',
+                                                            border: 'none',
+                                                            borderRadius: '50px',
+                                                            color: '#fff',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.9rem',
+                                                            cursor: 'pointer',
+                                                            boxShadow: '0 4px 15px rgba(0, 118, 254, 0.3)'
+                                                        }}
+                                                    >
+                                                        Apply Here
+                                                    </button>
+
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (job.pdfUrl) {
+                                                                window.open(job.pdfUrl, '_blank');
+                                                            } else {
+                                                                showAlert('Detailed Job Description is unavailable for this position.', 'PDF Unavailable');
+                                                            }
+                                                        }}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '0.8rem',
+                                                            background: 'rgba(255, 255, 255, 0.05)',
+                                                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                            borderRadius: '50px',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            gap: '8px',
+                                                            color: '#00c2ff',
+                                                            transition: 'all 0.3s ease',
+                                                            textDecoration: 'none',
+                                                            fontSize: '0.85rem',
+                                                            fontWeight: 600,
+                                                            cursor: 'pointer'
+                                                        }}
+                                                        onMouseEnter={(e) => {
+                                                            e.currentTarget.style.background = 'rgba(0, 194, 255, 0.1)';
+                                                            e.currentTarget.style.borderColor = '#00c2ff';
+                                                        }}
+                                                        onMouseLeave={(e) => {
+                                                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                                                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                                                        }}
+                                                    >
+                                                        <FileText size={18} />
+                                                        <span>JD</span>
+                                                    </button>
+                                                </div>
                                             </motion.div>
                                         </motion.div>
                                     ))}

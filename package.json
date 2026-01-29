@@ -4,6 +4,7 @@
   "description": "",
   "main": "tailwind.config.js",
   "dependencies": {
+    "@supabase/supabase-js": "^2.93.2",
     "@tailwindcss/vite": "^4.1.18",
     "@vitejs/plugin-react": "^5.1.2",
     "acorn": "^8.15.0",

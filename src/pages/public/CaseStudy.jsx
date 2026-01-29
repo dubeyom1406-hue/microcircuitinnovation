@@ -401,7 +401,11 @@ const CaseStudy = () => {
                                                 </p>
 
                                                 {/* Download Button */}
-                                                <motion.button
+                                                <motion.a
+                                                    href={study.pdfUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    download={`CaseStudy_${study.title.replace(/\s+/g, '_')}.pdf`}
                                                     whileHover={{ height: '55px' }}
                                                     style={{
                                                         height: '48px',
@@ -420,11 +424,12 @@ const CaseStudy = () => {
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
-                                                        transition: 'height 0.3s ease'
+                                                        transition: 'height 0.3s ease',
+                                                        textDecoration: 'none'
                                                     }}
                                                 >
                                                     Download
-                                                </motion.button>
+                                                </motion.a>
                                             </motion.div>
                                         ))}
                                     </motion.div>

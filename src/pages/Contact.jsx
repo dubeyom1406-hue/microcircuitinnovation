@@ -85,7 +85,7 @@ const Contact = () => {
     };
 
     const handleDirection = () => {
-        window.open('https://maps.google.com/?q=B-423,+STC,+S+P+Ring+Road,+Ambali+Junction+Ahmedabad,+Gujarat+380058', '_blank');
+        window.open(' https://maps.app.goo.gl/7nwmhuLDdttLhFVAA?g_st=iw', '_blank');
     };
 
     return (
@@ -95,7 +95,7 @@ const Contact = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="contact-page mobile-full-width"
-            style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: isMobile ? 'flex-start' : 'center', alignItems: 'center', padding: isMobile ? '14rem 1.5rem 2rem' : '5rem 1rem 2rem', background: '#000', fontFamily: '"Outfit", sans-serif', width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}
+            style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: isMobile ? 'flex-start' : 'center', alignItems: 'center', padding: isMobile ? '20rem 1.5rem 2rem' : '10rem 1rem 2rem', background: '#000', fontFamily: '"Outfit", sans-serif', width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}
         >
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -244,9 +244,8 @@ const Contact = () => {
                                     color: '#fff'
                                 }}>
                                     <p style={{ fontSize: '1rem', lineHeight: 1.5, margin: 0, fontWeight: 500 }}>
-                                        B-423, STC, S P Ring Road,<br />
-                                        Ambali Junction<br />
-                                        Ahmedabad, Gujarat 380058
+                                        #522, Shivam Trade Center, Nr One World West, Opp Sarswati Hospital, S P Ring Road,<br />
+                                        Ambli, Ahmedabad - 380058
                                     </p>
                                 </div>
 

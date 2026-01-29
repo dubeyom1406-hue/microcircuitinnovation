@@ -1,20 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Send } from 'lucide-react';
+import { ChevronLeft, Send, UploadCloud, FileText, X } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../lib/firebase';
 
 const AddVacancy = () => {
     const [formData, setFormData] = useState({
         title: '',
         exp: '',
         location: '',
-        description: ''
+        description: '',
+        pdfUrl: ''
     });
+
+    const [pdfFile, setPdfFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
     const { addVacancy } = useAdmin();
     const navigate = useNavigate();
+    const fileInputRef = useRef(null);
+
+    const handleFileChange = (e) => {
+        if (e.target.files[0]) {
+            const file = e.target.files[0];
+            if (file.type === 'application/pdf') {
+                setPdfFile(file);
+                setMessage({ type: '', text: '' });
+            } else {
+                setMessage({ type: 'error', text: 'Please select a valid PDF file.' });
+            }
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,9 +40,25 @@ const AddVacancy = () => {
         setMessage({ type: '', text: '' });
 
         try {
-            await addVacancy(formData);
+            let finalPdfUrl = formData.pdfUrl;
+
+            // Handle PDF Upload to Firebase Storage
+            if (pdfFile) {
+                const fileRef = ref(storage, `vacancies/${Date.now()}_${pdfFile.name}`);
+                const snapshot = await uploadBytes(fileRef, pdfFile);
+                finalPdfUrl = await getDownloadURL(snapshot.ref);
+            }
+
+            const submissionData = {
+                ...formData,
+                pdfUrl: finalPdfUrl,
+                postedAt: new Date().toISOString()
+            };
+
+            await addVacancy(submissionData);
             setMessage({ type: 'success', text: 'Job opportunity posted successfully!' });
-            setFormData({ title: '', exp: '', location: '', description: '' });
+            setFormData({ title: '', exp: '', location: '', description: '', pdfUrl: '' });
+            setPdfFile(null);
             setTimeout(() => navigate('/admin/dashboard'), 2000);
         } catch (error) {
             console.error("Submit Error:", error);
@@ -36,11 +70,19 @@ const AddVacancy = () => {
 
     return (
         <div style={{ maxWidth: '900px' }}>
-            <div style={{ marginBottom: '3rem' }}>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.5rem', letterSpacing: '-0.5px' }}>
-                    Post <span style={{ color: '#00c2ff' }}>New Vacancy</span>
-                </h1>
-                <p style={{ color: '#666', fontSize: '1.1rem' }}>Recruit technical excellence for the future of semiconductor design.</p>
+            <div style={{ marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                <button
+                    onClick={() => navigate('/admin/dashboard')}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer' }}
+                >
+                    <ChevronLeft size={20} />
+                </button>
+                <div>
+                    <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.5rem', letterSpacing: '-1.5px' }}>
+                        Post <span style={{ color: '#00c2ff' }}>New Vacancy</span>
+                    </h1>
+                    <p style={{ color: '#666', fontSize: '1.1rem' }}>Recruit technical excellence for the future of semiconductor design.</p>
+                </div>
             </div>
 
             <form onSubmit={handleSubmit} style={{
@@ -100,6 +142,76 @@ const AddVacancy = () => {
                     />
                 </div>
 
+                {/* PDF UPLOAD SECTION */}
+                <div style={inputGroupStyle}>
+                    <label style={labelStyle}>Detailed Job Description (PDF - Optional)</label>
+                    <input
+                        type="file"
+                        accept="application/pdf"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        style={{ display: 'none' }}
+                    />
+
+                    {!pdfFile ? (
+                        <div
+                            onClick={() => fileInputRef.current.click()}
+                            style={{
+                                border: '2px dashed rgba(255, 255, 255, 0.1)',
+                                borderRadius: '16px',
+                                padding: '2rem',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                background: 'rgba(255, 255, 255, 0.01)'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = '#00c2ff';
+                                e.currentTarget.style.background = 'rgba(0, 194, 255, 0.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.01)';
+                            }}
+                        >
+                            <div style={{
+                                width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(0, 194, 255, 0.1)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.8rem', color: '#00c2ff'
+                            }}>
+                                <UploadCloud size={20} />
+                            </div>
+                            <p style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff' }}>Attach detailed JD (PDF)</p>
+                        </div>
+                    ) : (
+                        <div style={{
+                            background: 'rgba(34, 197, 94, 0.05)',
+                            border: '1px solid rgba(34, 197, 94, 0.2)',
+                            borderRadius: '16px',
+                            padding: '1rem 1.5rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div style={{ background: 'rgba(34, 197, 94, 0.1)', padding: '8px', borderRadius: '8px', color: '#22c55e' }}>
+                                    <FileText size={20} />
+                                </div>
+                                <p style={{ fontWeight: 600, color: '#fff', fontSize: '0.9rem' }}>{pdfFile.name}</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setPdfFile(null)}
+                                style={{ background: 'transparent', border: 'none', color: '#666', cursor: 'pointer' }}
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+                    )}
+                </div>
+
                 {message.text && (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -157,7 +269,7 @@ const AddVacancy = () => {
                         }}
                     >
                         <Send size={20} />
-                        {isSubmitting ? 'Posting...' : 'Open Vacancy'}
+                        {isSubmitting ? 'Posting Opportunity...' : 'Open Vacancy'}
                     </button>
                 </div>
             </form>

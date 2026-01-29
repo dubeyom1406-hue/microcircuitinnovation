@@ -50,8 +50,8 @@ const IntroLoader = ({ onComplete }) => {
                     <motion.div
                         key="master-loader-content"
                         initial={{ opacity: 1 }}
-                        exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-                        transition={{ duration: 1 }}
+                        exit={{ opacity: 0 }} // Smooth fade out instead of blur/scale
+                        transition={{ duration: 0.8, ease: "easeInOut" }}
                         className="relative w-full h-full flex flex-col items-center justify-center"
                     >
                         {/* 1. Logo Animation (Center -> Top-Left) */}
@@ -59,7 +59,7 @@ const IntroLoader = ({ onComplete }) => {
                             initial={{ opacity: 0, scale: 0 }}
                             animate={{
                                 opacity: phase >= 0 ? 1 : 0,
-                                scale: phase >= 1 ? 0.6 : (phase >= 0 ? 1 : 0),
+                                scale: phase >= 3 ? 0.384 : (phase >= 1 ? 0.6 : (phase >= 0 ? 1 : 0)), // 0.384 * 650px = 250px (Navbar height)
                                 x: phase >= 1 ? '-44vw' : 0,
                                 y: phase >= 1 ? '-44vh' : 0,
                             }}
@@ -88,23 +88,33 @@ const IntroLoader = ({ onComplete }) => {
                             )}
                         </motion.div>
 
-                        {/* 2. MicroCircuits Innovations Text (Center -> Top-Right) */}
+                        {/* 2. MicroCircuits Innovations Text (Center -> Top-Left Overlap) */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{
                                 opacity: phase >= 2 ? 1 : 0,
-                                scale: phase >= 3 ? 0.5 : (phase >= 2 ? 1 : 0.9),
-                                x: phase >= 3 ? '35vw' : 0,
-                                y: phase >= 3 ? '-42vh' : (phase >= 2 ? 0 : 20),
+                                scale: phase >= 3 ? 0.45 : (phase >= 2 ? 1 : 0.9),
+                                x: phase >= 3 ? '-28.5vw' : 0, // Adjusted for perfect overlap with scaled logo
+                                y: phase >= 3 ? '-44.5vh' : (phase >= 2 ? 0 : 20),
                             }}
                             transition={{
-                                duration: 1.2,
+                                duration: 1.5,
                                 ease: [0.16, 1, 0.3, 1]
                             }}
-                            className="absolute z-[4001] flex flex-col items-center text-center pointer-events-none"
+                            style={{
+                                display: 'flex',
+                                gap: '0.6rem',
+                                fontSize: phase >= 3 ? '2.5rem' : '4rem', // Dynamic font size based on phase
+                                fontWeight: '600',
+                                letterSpacing: '0.02em',
+                                whiteSpace: 'nowrap',
+                                zIndex: 4001,
+                                pointerEvents: 'none',
+                                position: 'absolute'
+                            }}
                         >
-                            <h1 className="text-4xl md:text-7xl font-bold text-white tracking-tight leading-none mb-4">MicroCircuits</h1>
-                            <h1 className="text-2xl md:text-5xl font-bold text-[#b0bebe] tracking-tight leading-none">Innovations</h1>
+                            <span style={{ color: '#fff' }}>MicroCircuits</span>
+                            <span style={{ color: '#b0bebe' }}>Innovations</span>
                         </motion.div>
 
                         {/* ========================================== */}
@@ -206,7 +216,7 @@ const IntroLoader = ({ onComplete }) => {
                                                 filter: phase >= 8 ? "blur(10px)" : "blur(0px)"
                                             }}
                                             transition={{ opacity: { duration: 0.8, ease: "easeInOut" }, y: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }, filter: { duration: 0.8 } }}
-                                            className="flex space-x-8 md:space-x-20"
+                                            className="flex space-x-8 md:space-x-20 flex gap-[2.5px] md:gap-[30px] lg:gap-[35.5px]"
                                         >
                                             {["Design.", "Develop.", "Deliver."].map((word, i) => (
                                                 <motion.span
@@ -237,9 +247,19 @@ const IntroLoader = ({ onComplete }) => {
                                                     }}
                                                     className="text-center mt-8"
                                                 >
-                                                    <p className="text-xl md:text-4xl font-light tracking-wide text-white opacity-90">
+                                                    <p style={{
+                                                        fontSize: 'clamp(1.5rem, 6vw, 3rem)', // Reduced size
+                                                        fontWeight: 600,
+                                                        letterSpacing: '-1px',
+                                                        lineHeight: 1.1,
+                                                        color: '#fff',
+                                                        display: 'flex',
+                                                        flexWrap: 'wrap',
+                                                        justifyContent: 'center',
+                                                        gap: '0.5rem'
+                                                    }}>
                                                         <motion.span layoutId="word-your">Your</motion.span>{" "}
-                                                        <motion.span layoutId="word-next-chip" className={`inline-block font-bold text-fill blue-fill ${phase >= 8 ? 'active' : ''}`}>Next Chip</motion.span>{" "}
+                                                        <motion.span layoutId="word-next-chip" className={`inline-block text-fill blue-fill ${phase >= 8 ? 'active' : ''}`}>Next Chip</motion.span>{" "}
                                                         <motion.span layoutId="word-starts">Starts</motion.span>{" "}
                                                         <motion.span layoutId="word-here">Here</motion.span>
                                                     </p>

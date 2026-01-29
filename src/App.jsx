@@ -8,6 +8,7 @@ import Careers from './pages/public/Careers';
 import CaseStudy from './pages/public/CaseStudy';
 import Contact from './pages/public/Contact';
 import About from './pages/public/About';
+import LoadingOverlay from './components/common/LoadingOverlay';
 import { AnimatePresence } from 'framer-motion';
 import { AdminProvider } from './context/AdminContext';
 import './index.css';
@@ -23,11 +24,14 @@ import ContactMessagesList from './pages/admin/ContactMessagesList';
 import AddCaseStudy from './pages/admin/AddCaseStudy';
 import AddVacancy from './pages/admin/AddVacancy';
 import ManageLayout from './pages/admin/ManageLayout';
+import AdminSettings from './pages/admin/AdminSettings';
 import CustomCursor from './components/common/CustomCursor';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import IntroLoader from './components/common/IntroLoader';
 import InfiniteLogoPreloader from './components/common/InfiniteLogoPreloader';
 import { LoadingProvider, useLoading } from './context/LoadingContext';
+import { UIProvider } from './context/UIContext';
+import GlobalModal from './components/common/GlobalModal';
 
 const InitialLoaderManager = () => {
     const { startLoading, stopLoading } = useLoading();
@@ -56,8 +60,12 @@ const AppContent = () => {
         }
     }, [isPathAdmin]);
 
+    const { isLoading } = useLoading();
+
     return (
         <div className="App">
+            <GlobalModal />
+            <InfiniteLogoPreloader />
             <AnimatePresence>
                 {(!isPathAdmin && globalLoading) && (
                     <IntroLoader
@@ -152,6 +160,14 @@ const AppContent = () => {
                             </ProtectedRoute>
                         } />
 
+                        <Route path="/admin/settings" element={
+                            <ProtectedRoute>
+                                <AdminLayout>
+                                    <AdminSettings />
+                                </AdminLayout>
+                            </ProtectedRoute>
+                        } />
+
                         <Route path="*" element={<Expertise />} />
                     </Routes>
                 </AnimatePresence>
@@ -168,13 +184,15 @@ function App() {
         <Router>
             <ErrorBoundary>
                 <LoadingProvider>
-                    <AdminProvider>
-                        <div>
-                            {/* <InitialLoaderManager /> */}
-                            <CustomCursor />
-                            <AppContent />
-                        </div>
-                    </AdminProvider>
+                    <UIProvider>
+                        <AdminProvider>
+                            <div>
+                                {/* <InitialLoaderManager /> */}
+                                <CustomCursor />
+                                <AppContent />
+                            </div>
+                        </AdminProvider>
+                    </UIProvider>
                 </LoadingProvider>
             </ErrorBoundary>
         </Router>

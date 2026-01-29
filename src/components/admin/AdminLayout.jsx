@@ -16,11 +16,11 @@ import {
 import { useAdmin } from '../../context/AdminContext';
 
 const AdminLayout = ({ children }) => {
-    const { logoutAdmin: logout, user } = useAdmin();
+    const { logoutAdmin: logout, user, applications, contactMessages } = useAdmin();
     const navigate = useNavigate();
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
-    const [isMobile, setIsMobile] = React.useState(false); // Start false to be safe
+    const [isMobile, setIsMobile] = React.useState(false);
 
     React.useEffect(() => {
         const handleResize = () => {
@@ -29,17 +29,36 @@ const AdminLayout = ({ children }) => {
             if (mobile) setIsSidebarOpen(false);
             else setIsSidebarOpen(true);
         };
+        handleResize(); // Initial check
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    const appsCount = (applications || []).filter(a => !a.processed).length;
+    const inquiriesCount = (contactMessages || []).filter(m => !m.processed).length;
+    const totalNotifications = appsCount + inquiriesCount;
 
     const navItems = [
         { name: 'Dashboard', path: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
         { name: 'Manage Vacancies', path: '/admin/vacancies', icon: <Briefcase size={20} /> },
         { name: 'Manage Case Studies', path: '/admin/case-studies', icon: <FileText size={20} /> },
-        { name: 'Layout Manager', path: '/admin/layout', icon: <Settings size={20} /> },
-        { name: 'Applications', path: '/admin/applications', icon: <User size={20} /> },
-        { name: 'Inquiries', path: '/admin/inquiries', icon: <Bell size={20} /> },
+        {
+            name: 'Applications',
+            path: '/admin/applications',
+            icon: <User size={20} />,
+            badge: appsCount
+        },
+        {
+            name: 'Inquiries',
+            path: '/admin/inquiries',
+            icon: <Bell size={20} />,
+            badge: inquiriesCount
+        },
+        {
+            name: 'Settings',
+            path: '/admin/settings',
+            icon: <Settings size={20} />
+        },
     ];
 
     const isActive = (path) => location.pathname === path;
@@ -76,26 +95,41 @@ const AdminLayout = ({ children }) => {
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: '3rem',
-                    padding: '0 0.5rem'
+                    gap: '15px',
+                    marginBottom: '3.5rem',
+                    padding: '0.5rem'
                 }}>
                     <img
-                        src="/logo_large.png"
+                        src="/admin_sidebar_logo.png"
                         alt="MIPL Logo"
                         style={{
-                            width: '40px',
-                            height: 'auto',
+                            width: '48px',
+                            height: '48px',
                             objectFit: 'contain',
-                            borderRadius: '4px'
+                            filter: 'drop-shadow(0 0 12px rgba(168, 85, 247, 0.4))'
                         }}
                     />
                     {isSidebarOpen && (
-                        <span
-                            style={{ fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.5px' }}
-                        >
-                            MIPL <span style={{ color: '#00c2ff' }}>MATRIX</span>
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+                            <span style={{
+                                fontWeight: 800,
+                                fontSize: '1.2rem',
+                                letterSpacing: '1px',
+                                color: '#fff'
+                            }}>
+                                MIPL
+                            </span>
+                            <span style={{
+                                fontWeight: 900,
+                                fontSize: '0.9rem',
+                                letterSpacing: '3px',
+                                color: '#a855f7',
+                                marginTop: '4px',
+                                textTransform: 'uppercase'
+                            }}>
+                                ADMIN
+                            </span>
+                        </div>
                     )}
                 </div>
 
@@ -113,17 +147,25 @@ const AdminLayout = ({ children }) => {
                                 borderRadius: '12px',
                                 textDecoration: 'none',
                                 color: isActive(item.path) ? '#fff' : '#666',
-                                background: isActive(item.path) ? 'rgba(0, 194, 255, 0.1)' : 'transparent',
-                                border: isActive(item.path) ? '1px solid rgba(0, 194, 255, 0.2)' : '1px solid transparent',
+                                background: isActive(item.path) ? 'rgba(168, 85, 247, 0.1)' : 'transparent',
+                                border: isActive(item.path) ? '1px solid rgba(168, 85, 247, 0.2)' : '1px solid transparent',
                                 transition: 'all 0.2s ease',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden'
                             }}
                         >
-                            <span style={{ color: isActive(item.path) ? '#00c2ff' : 'inherit' }}>{item.icon}</span>
+                            <span style={{ color: isActive(item.path) ? '#a855f7' : 'inherit', position: 'relative' }}>
+                                {item.icon}
+                                {item.badge > 0 && !isSidebarOpen && (
+                                    <span style={dotBadgeStyle}></span>
+                                )}
+                            </span>
                             {isSidebarOpen && <span>{item.name}</span>}
+                            {isSidebarOpen && item.badge > 0 && (
+                                <span style={pillBadgeStyle}>{item.badge}</span>
+                            )}
                             {isSidebarOpen && isActive(item.path) && (
-                                <ChevronRight size={14} style={{ marginLeft: 'auto', color: '#00c2ff' }} />
+                                <ChevronRight size={14} style={{ marginLeft: 'auto', color: '#a855f7' }} />
                             )}
                         </Link>
                     ))}
@@ -148,7 +190,7 @@ const AdminLayout = ({ children }) => {
                             justifyContent: 'center',
                             border: '1px solid rgba(255, 255, 255, 0.1)'
                         }}>
-                            <User size={18} color="#00c2ff" />
+                            <User size={18} color="#a855f7" />
                         </div>
                         {isSidebarOpen && (
                             <div style={{ overflow: 'hidden' }}>
@@ -194,15 +236,15 @@ const AdminLayout = ({ children }) => {
                         top: '20px',
                         width: '40px',
                         height: '40px',
-                        background: '#00c2ff',
+                        background: '#a855f7',
                         border: 'none',
                         borderRadius: '50%',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#000',
-                        boxShadow: '0 0 15px rgba(0, 194, 255, 0.4)',
+                        color: '#fff',
+                        boxShadow: '0 0 15px rgba(168, 85, 247, 0.4)',
                         zIndex: 1100,
                     }}
                 >
@@ -233,7 +275,12 @@ const AdminLayout = ({ children }) => {
                     gap: '1.5rem',
                     borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
                 }}>
-                    <button style={headerIconStyle}><Bell size={18} /></button>
+                    <button style={{ ...headerIconStyle, position: 'relative' }} onClick={() => navigate('/admin/inquiries')}>
+                        <Bell size={18} />
+                        {totalNotifications > 0 && (
+                            <span style={pillBadgeStyleHeader}>{totalNotifications}</span>
+                        )}
+                    </button>
                     <div style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -270,6 +317,47 @@ const headerIconStyle = {
     color: '#666',
     cursor: 'pointer',
     transition: 'all 0.3s ease'
+};
+
+const dotBadgeStyle = {
+    position: 'absolute',
+    top: '-2px',
+    right: '-2px',
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    background: '#a855f7',
+    border: '2px solid #0a0a0a'
+};
+
+const pillBadgeStyle = {
+    marginLeft: 'auto',
+    background: '#a855f7',
+    color: '#fff',
+    fontSize: '0.7rem',
+    fontWeight: 700,
+    padding: '2px 8px',
+    borderRadius: '10px',
+    minWidth: '20px',
+    textAlign: 'center'
+};
+
+const pillBadgeStyleHeader = {
+    position: 'absolute',
+    top: '-5px',
+    right: '-5px',
+    background: '#a855f7',
+    color: '#fff',
+    fontSize: '0.65rem',
+    fontWeight: 800,
+    width: '18px',
+    height: '18px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: '2px solid #050505',
+    boxShadow: '0 0 10px rgba(168, 85, 247, 0.4)'
 };
 
 export default AdminLayout;

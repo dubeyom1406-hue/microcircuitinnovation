@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search as SearchIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAdmin } from '../context/AdminContext';
 import Search from './Search';
 
@@ -11,6 +10,7 @@ const Navbar = () => {
     const location = useLocation();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
 
+    // Hide navbar on admin pages
     if (location.pathname.startsWith('/admin')) {
         return null;
     }
@@ -28,42 +28,58 @@ const Navbar = () => {
 
     return (
         <div style={{
-            position: 'fixed',
+            position: 'fixed', // KEEPS IT AT THE TOP OF THE SCREEN
             top: 0,
             left: 0,
             right: 0,
             zIndex: 1000,
-            pointerEvents: 'none',
+            pointerEvents: 'none', // Allows clicks to pass through empty spaces
             width: '100%',
-            height: '100px', // Header container height
+            height: '100px',
             display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr',
+            gridTemplateColumns: '1fr auto 1fr', // 3 Columns: Left (Branding), Center (Nav), Right (Slogan)
             alignItems: 'center',
             padding: '0 3rem'
         }}>
 
-            {/* Left Column: Branding */}
+            {/* --- LEFT COLUMN: Logo + Company Name --- */}
             <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.8rem',
+                    gap: '1rem', // Space between logo and text
                     pointerEvents: 'auto',
                     cursor: 'pointer',
                     justifySelf: 'start'
                 }}
                 onClick={() => navigate('/')}
             >
+                {/* Logo Image */}
                 <img
                     src="/logo_large.png"
-                    alt="Logo"
-                    style={{ height: '70px', filter: 'drop-shadow(0 0 10px #00c2ff)' }}
+                    alt="MicroCircuits Innovations"
+                    style={{
+                        height: '50px',
+                        filter: 'drop-shadow(0 0 8px rgba(0, 194, 255, 0.5))'
+                    }}
                 />
+
+                {/* Company Name (Moved from Right to Left) */}
+                <div style={{
+                    fontSize: '1.2rem',
+                    fontWeight: '500',
+                    color: '#fff',
+                    whiteSpace: 'nowrap',
+                    letterSpacing: '0.02em'
+                    
+                }}>
+                    MicroCircuits Innovations
+                </div>
             </motion.div>
 
-            {/* Center Column: Navigation Capsule */}
+            {/* --- CENTER COLUMN: Navigation Capsule --- */}
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <motion.header
                     initial={{ y: -50, opacity: 0 }}
@@ -101,7 +117,7 @@ const Navbar = () => {
                                     style={{
                                         color: isActive ? '#00c2ff' : '#ccc',
                                         textDecoration: 'none',
-                                        fontSize: '0.85rem',
+                                        fontSize: '0.9rem',
                                         fontWeight: isActive ? '500' : '400',
                                         transition: 'all 0.3s ease',
                                         whiteSpace: 'nowrap',
@@ -120,25 +136,22 @@ const Navbar = () => {
                 </motion.header>
             </div>
 
-            {/* Right Column: Branding Text */}
+            {/* --- RIGHT COLUMN: Slogan --- */}
             <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1, delay: 0.5 }}
                 style={{
-                    fontSize: '1.1rem', // Increased from 0.85rem
-                    fontWeight: '600',
-                    letterSpacing: '0.05em',
+                    fontSize: '1rem',
+                    fontWeight: '400',
+                    color: '#b0bebe', // Muted text color for the slogan
                     pointerEvents: 'none',
                     justifySelf: 'end',
                     whiteSpace: 'nowrap',
-                    display: 'flex',
-                    gap: '0.4rem',
-                    alignItems: 'center'
+                    letterSpacing: '0.05em'
                 }}
             >
-                <span style={{ color: '#fff' }}>MicroCircuits</span>
-                <span style={{ color: '#b0bebe' }}>Innovations</span>
+                Innovations. Redefined
             </motion.div>
 
             {/* Search Overlay */}

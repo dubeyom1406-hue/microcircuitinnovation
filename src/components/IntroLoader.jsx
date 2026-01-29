@@ -245,7 +245,6 @@ const IntroLoader = ({ onComplete }) => {
                 </AnimatePresence>
 
 
-
                 <AnimatePresence>
                     {phase >= 7 && phase < 11 && (
                         <motion.div

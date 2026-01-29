@@ -1,9 +1,11 @@
 import { useLoading } from '../../context/LoadingContext';
+import { useEffect, useState } from "react";
 
-const InfiniteLogoPreloader = () => {
-    const { isLoading } = useLoading();
-    const [isVisible, setIsVisible] = useState(true);
-    const [shouldRender, setShouldRender] = useState(true);
+const InfiniteLogoPreloader = ({ message, active }) => {
+    const { isLoading: contextLoading } = useLoading();
+    const isLoading = active !== undefined ? active : contextLoading;
+    const [isVisible, setIsVisible] = useState(isLoading);
+    const [shouldRender, setShouldRender] = useState(isLoading);
 
     useEffect(() => {
         if (isLoading) {
@@ -18,8 +20,6 @@ const InfiniteLogoPreloader = () => {
         }
     }, [isLoading]);
 
-    // EMERGENCY: Disable loader
-    return null;
 
     if (!shouldRender) return null;
 
@@ -104,7 +104,7 @@ const InfiniteLogoPreloader = () => {
                     <path className="infinity-path" d="M25,25 c0,-15 25,-15 25,0 0,15 25,15 25,0 0,-15 -25,-15 -25,0 0,15 -25,15 -25,0 z"></path>
                 </svg>
             </div>
-            <div className="loading-text">Loading...</div>
+            <div className="loading-text">{message || "Loading..."}</div>
         </div>
     );
 };

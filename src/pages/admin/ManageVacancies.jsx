@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Edit2, Trash2, Search, Plus, X } from 'lucide-react';
+import { Edit2, Trash2, Search, Plus, X, FileText } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { useUI } from '../../context/UIContext';
 import { useNavigate } from 'react-router-dom';
 
 const ManageVacancies = () => {
@@ -15,8 +16,11 @@ const ManageVacancies = () => {
         v.location.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const { showConfirm } = useUI();
+
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this vacancy?')) {
+        const confirmed = await showConfirm('Are you sure you want to delete this vacancy? This will remove it from the Careers page immediately.', 'Delete Vacancy');
+        if (confirmed) {
             await deleteVacancy(id);
         }
     };
@@ -122,6 +126,17 @@ const ManageVacancies = () => {
                             </div>
                         </div>
                         <div style={{ display: 'flex', gap: '0.8rem' }}>
+                            {vacancy.pdfUrl && (
+                                <a
+                                    href={vacancy.pdfUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={actionButtonStyle('#a855f7')}
+                                    title="View Detailed JD"
+                                >
+                                    <FileText size={18} />
+                                </a>
+                            )}
                             <button
                                 onClick={() => setEditingVacancy(vacancy)}
                                 style={actionButtonStyle('#00c2ff')}

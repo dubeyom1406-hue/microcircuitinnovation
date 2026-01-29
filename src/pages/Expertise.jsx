@@ -105,8 +105,8 @@ const Expertise = ({ onNavigate }) => {
                         width: 280px;
                         height: 360px;
                         background: linear-gradient(180deg, #3c3c3c, #2b2b2b);
-                        border-radius: 18px;
-                        padding: 28px;
+                        border-radius: 24px;
+                        padding: 28px 28px 60px 28px;
                         color: #fff;
                         position: relative;
                         display: flex;
@@ -138,28 +138,27 @@ const Expertise = ({ onNavigate }) => {
                     }
                     .service-card button {
                         position: absolute;
-                        bottom: 28px;
-                        left: 28px;
-                        width: calc(100% - 56px);
-                        background: #0a78ff;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        width: 100%;
+                        height: 48px;
+                        background: linear-gradient(90deg, #0076fe 0%, #0056b1 100%);
                         border: none;
-                        border-radius: 22px;
+                        border-radius: 0 0 24px 24px;
                         color: white;
                         padding: 10px 0;
-                        font-size: 15px;
+                        font-size: 1rem;
                         font-weight: 600;
                         cursor: pointer;
                         display: flex;
-                        flex-direction: column;
                         align-items: center;
                         justify-content: center;
                         line-height: 1.2;
+                        transition: height 0.3s ease;
                     }
-                    .service-card button span {
-                        display: block;
-                        font-size: 12px;
-                        font-weight: 400;
-                        opacity: 0.9;
+                    .service-card button:hover {
+                        height: 55px;
                     }
                     @media (max-width: 768px) {
                         .service-card {
@@ -247,10 +246,15 @@ const Expertise = ({ onNavigate }) => {
                                         }}></div>
                                     </div>
                                 ) : (
-                                    <button>
-                                        Learn
-                                        <span>More</span>
-                                    </button>
+                                    <motion.button
+                                        whileHover={{ height: '55px' }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleCard(card.id);
+                                        }}
+                                    >
+                                        Learn More
+                                    </motion.button>
                                 )}
                             </motion.div>
                         );

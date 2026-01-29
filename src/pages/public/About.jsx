@@ -137,6 +137,9 @@ const About = () => {
                     <p style={{ fontSize: '1.1rem', color: '#ccc', marginBottom: '20px', lineHeight: 1.8 }}>
                         We offer full-spectrum VLSI design services, empowering our clients to go Further, Faster — across AI, Automotive, Connectivity, Mobility, Server, and Wearable platforms.
                     </p>
+                    <p style={{ fontSize: '1.3rem', color: '#00aaff', fontWeight: 300, fontStyle: 'italic', marginBottom: '20px', lineHeight: '1.6' }}>
+                        With Deep Domain Expertise and Proven Execution, We Don't Just Design Silicons
+                    </p>
                 </div>
                 <h4 style={{ fontSize: '2.5rem', fontWeight: 700, color: '#00aaff' }}>
                     "We Help Shape the Future"

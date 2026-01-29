@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, Search, Plus, ExternalLink } from 'lucide-react';
+import { Trash2, Search, Plus, ExternalLink, Download } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { useUI } from '../../context/UIContext';
 import { useNavigate } from 'react-router-dom';
 
 const ManageCaseStudies = () => {
@@ -14,8 +15,11 @@ const ManageCaseStudies = () => {
         s.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const { showConfirm } = useUI();
+
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this case study?')) {
+        const confirmed = await showConfirm('Are you sure you want to delete this case study? This will remove it from the public list immediately.', 'Delete Case Study');
+        if (confirmed) {
             await deleteCaseStudy(id);
         }
     };
@@ -110,21 +114,37 @@ const ManageCaseStudies = () => {
                             paddingTop: '1rem',
                             borderTop: '1px solid rgba(255, 255, 255, 0.05)'
                         }}>
-                            <a
-                                href={study.pdfUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                    color: '#aaa',
-                                    textDecoration: 'none',
-                                    fontSize: '0.85rem'
-                                }}
-                            >
-                                <ExternalLink size={14} /> View Doc
-                            </a>
+                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                <a
+                                    href={study.pdfUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        color: '#aaa',
+                                        textDecoration: 'none',
+                                        fontSize: '0.85rem'
+                                    }}
+                                >
+                                    <ExternalLink size={14} /> View Doc
+                                </a>
+                                <a
+                                    href={study.pdfUrl}
+                                    download={`CaseStudy_${study.title.replace(/\s+/g, '_')}.pdf`}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        color: '#00c2ff',
+                                        textDecoration: 'none',
+                                        fontSize: '0.85rem'
+                                    }}
+                                >
+                                    <Download size={14} /> Download
+                                </a>
+                            </div>
                             <button
                                 onClick={() => {
                                     const studyId = study.id || study._id;

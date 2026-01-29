@@ -7,7 +7,12 @@ import {
     signOut,
     onAuthStateChanged,
     setPersistence,
-    browserSessionPersistence
+    browserSessionPersistence,
+    updatePassword,
+    updateProfile,
+    updateEmail,
+    EmailAuthProvider,
+    reauthenticateWithCredential
 } from 'firebase/auth';
 import {
     collection,
@@ -52,17 +57,22 @@ export const AdminProvider = ({ children }) => {
         if (!auth) {
             console.error("Firebase auth not initialized in AdminContext. Check Vercel Env Vars.");
             setLoading(false);
+            stopLoading();
             return;
         }
+
+        startLoading(); // Start global loader for auth check
 
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             console.log("Auth state changed:", currentUser ? "Logged In" : "Not Logged In");
             setUser(currentUser);
             setIsAdmin(!!currentUser);
             setLoading(false);
+            stopLoading(); // Stop global loader
         }, (error) => {
             console.error("Auth state error:", error);
             setLoading(false);
+            stopLoading();
         });
 
         // Failsafe: if nothing happens in 4 seconds, stop loading
@@ -70,6 +80,7 @@ export const AdminProvider = ({ children }) => {
             if (loading) {
                 console.warn("Auth check timed out after 4s. Forcing loading off.");
                 setLoading(false);
+                stopLoading();
             }
         }, 4000);
 
@@ -132,7 +143,7 @@ export const AdminProvider = ({ children }) => {
                 console.warn("Firebase DB not initialized, skipping public data fetch");
                 return;
             }
-            // startLoading(); // Optional: trigger global loader
+            startLoading(); // Trigger global loader for first data fetch
             try {
                 const vacanciesSnap = await getDocs(collection(db, 'vacancies'));
                 setVacancies(mapDocs(vacanciesSnap));
@@ -142,6 +153,8 @@ export const AdminProvider = ({ children }) => {
 
             } catch (error) {
                 console.error("Error fetching public data:", error);
+            } finally {
+                stopLoading();
             }
         };
 
@@ -340,6 +353,18 @@ export const AdminProvider = ({ children }) => {
         }
     };
 
+    const updateApplication = async (id, updatedData) => {
+        try {
+            const appRef = doc(db, 'applications', id);
+            await updateDoc(appRef, updatedData);
+            setApplications(prev => prev.map(a => a.id === id ? { ...a, ...updatedData } : a));
+            console.log("Application updated successfully:", id);
+        } catch (error) {
+            console.error('Error updating application:', error);
+            throw error;
+        }
+    };
+
     const addContactMessage = async (messageData) => {
         try {
             console.log("Submitting contact message to Firestore...", messageData);
@@ -366,14 +391,56 @@ export const AdminProvider = ({ children }) => {
         }
     };
 
+    const updateContactMessage = async (id, updatedData) => {
+        try {
+            const msgRef = doc(db, 'contacts', id);
+            await updateDoc(msgRef, updatedData);
+            setContactMessages(prev => prev.map(m => m.id === id ? { ...m, ...updatedData } : m));
+            console.log("Contact message updated successfully:", id);
+        } catch (error) {
+            console.error('Error updating contact message:', error);
+            throw error;
+        }
+    };
+
+    const updateAdminPassword = async (currentPassword, newPassword) => {
+        try {
+            if (!user) throw new Error("No user logged in");
+            const credential = EmailAuthProvider.credential(user.email, currentPassword);
+            await reauthenticateWithCredential(user, credential);
+            await updatePassword(user, newPassword);
+            return { success: true };
+        } catch (error) {
+            console.error('Password update error:', error);
+            return { success: false, error: error.message };
+        }
+    };
+
+    const updateAdminProfile = async (newEmail, newDisplayName) => {
+        try {
+            if (!user) throw new Error("No user logged in");
+            if (newDisplayName) {
+                await updateProfile(user, { displayName: newDisplayName });
+            }
+            if (newEmail && newEmail !== user.email) {
+                await updateEmail(user, newEmail);
+            }
+            return { success: true };
+        } catch (error) {
+            console.error('Profile update error:', error);
+            return { success: false, error: error.message };
+        }
+    };
+
     return (
         <AdminContext.Provider value={{
             user, isAdmin, loginAdmin, logoutAdmin, registerAdmin,
             vacancies, addVacancy, updateVacancy, deleteVacancy,
             caseStudies, addCaseStudy, updateCaseStudy, deleteCaseStudy,
-            applications, addApplication, deleteApplication,
-            contactMessages, addContactMessage, deleteContactMessage,
+            applications, addApplication, deleteApplication, updateApplication,
+            contactMessages, addContactMessage, deleteContactMessage, updateContactMessage,
             layoutSettings, updateLayoutSettings,
+            updateAdminPassword, updateAdminProfile,
             loading
         }}>
             {children}

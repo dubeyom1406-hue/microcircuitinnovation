@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle2 } from 'lucide-react';
-import LoadingOverlay from '../common/LoadingOverlay';
+import InfiniteLogoPreloader from '../common/InfiniteLogoPreloader';
 import SuccessModal from '../common/SuccessModal';
 import { useAdmin } from '../../context/AdminContext';
+
+import { supabase } from '../../lib/supabase';
 
 const ApplyModal = ({ isOpen, onClose, jobTitle }) => {
     const { addApplication } = useAdmin();
@@ -32,31 +34,71 @@ const ApplyModal = ({ isOpen, onClose, jobTitle }) => {
         const phoneRegex = /^\+?[\d\s-]{10,}$/;
         if (!phoneRegex.test(formData.phone)) newErrors.phone = true;
 
+        if (!selectedFile) {
+            alert('Please upload your resume (PDF).');
+            return false;
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (validate()) {
-            setIsLoading(true);
 
-            try {
-                // Since we don't have Firebase Storage set up right now, 
-                // we'll just save the application details to Firestore.
-                await addApplication({
-                    ...formData,
-                    jobTitle,
-                    appliedAt: new Date().toISOString()
-                });
+        if (!validate()) {
+            return;
+        }
 
-                setIsSubmitted(true);
-            } catch (error) {
-                console.error('Submission error:', error);
-                alert(error.message || 'Failed to submit application. Please try again.');
-            } finally {
-                setIsLoading(false);
+        setIsLoading(true);
+
+        try {
+            console.log("Starting application submission...");
+            let resumeUrl = '';
+
+            // 1. Upload file to Supabase Storage (using existing 'case-studies' bucket)
+            if (selectedFile) {
+                // Use 'resumes/' prefix to keep it organized within the existing bucket
+                const uniqueFileName = `resumes/${Date.now()}_${selectedFile.name.replace(/\s+/g, '-')}`;
+                console.log("Uploading file to Supabase (case-studies bucket):", uniqueFileName);
+
+                const { data, error: uploadError } = await supabase.storage
+                    .from('case-studies') // Using existing bucket
+                    .upload(uniqueFileName, selectedFile, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (uploadError) {
+                    console.error("Supabase upload error:", uploadError);
+                    throw new Error(`Resume upload failed: ${uploadError.message}`);
+                }
+
+                // Get Public URL
+                const { data: { publicUrl } } = supabase.storage
+                    .from('case-studies')
+                    .getPublicUrl(uniqueFileName);
+
+                resumeUrl = publicUrl;
+                console.log("Resume uploaded successfully:", resumeUrl);
             }
+
+            // 2. Save application details to Firestore
+            console.log("Saving application to Firestore...");
+            await addApplication({
+                ...formData,
+                jobTitle,
+                resumeUrl,
+                appliedAt: new Date().toISOString()
+            });
+
+            console.log("Application submitted successfully!");
+            setIsSubmitted(true);
+        } catch (error) {
+            console.error('Submission technical error:', error);
+            alert(`Error: ${error.message || 'Something went wrong. Please check your internet and try again.'}`);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -76,7 +118,7 @@ const ApplyModal = ({ isOpen, onClose, jobTitle }) => {
 
     return (
         <AnimatePresence>
-            <LoadingOverlay isVisible={isLoading} message="Submitting Application..." />
+            <InfiniteLogoPreloader active={isLoading} message="Submitting Application..." />
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -202,17 +244,20 @@ const ApplyModal = ({ isOpen, onClose, jobTitle }) => {
                                 </button>
                                 <button
                                     onClick={handleSubmit}
+                                    disabled={isLoading}
                                     style={{
                                         padding: '1rem',
-                                        background: 'linear-gradient(90deg, #00c2ff 0%, #007bff 100%)',
+                                        background: isLoading ? '#444' : 'linear-gradient(90deg, #00c2ff 0%, #007bff 100%)',
                                         border: 'none',
                                         borderRadius: '50px',
                                         color: '#fff',
                                         fontWeight: 600,
-                                        cursor: 'pointer'
+                                        cursor: isLoading ? 'not-allowed' : 'pointer',
+                                        opacity: isLoading ? 0.7 : 1,
+                                        transition: 'all 0.3s ease'
                                     }}
                                 >
-                                    Submit
+                                    {isLoading ? 'Submitting...' : 'Submit'}
                                 </button>
                             </div>
                         </div>
