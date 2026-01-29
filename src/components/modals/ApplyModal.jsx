@@ -58,6 +58,10 @@ const ApplyModal = ({ isOpen, onClose, jobTitle }) => {
 
             // 1. Upload file to Supabase Storage (using existing 'case-studies' bucket)
             if (selectedFile) {
+                if (!supabase) {
+                    alert("System Error: File upload service is not configured. Please contact support.");
+                    throw new Error("Supabase client is not initialized.");
+                }
                 // Use 'resumes/' prefix to keep it organized within the existing bucket
                 const uniqueFileName = `resumes/${Date.now()}_${selectedFile.name.replace(/\s+/g, '-')}`;
                 console.log("Uploading file to Supabase (case-studies bucket):", uniqueFileName);
