@@ -64,8 +64,8 @@ const AppContent = () => {
 
     return (
         <div className="App">
-            <GlobalModal />
-            <InfiniteLogoPreloader />
+            {/* <GlobalModal /> */}
+            {/* <InfiniteLogoPreloader /> */}
             <AnimatePresence>
                 {(!isPathAdmin && globalLoading) && (
                     <IntroLoader
@@ -188,7 +188,7 @@ function App() {
                         <AdminProvider>
                             <div>
                                 {/* <InitialLoaderManager /> */}
-                                <CustomCursor />
+                                {/* <CustomCursor /> */}
                                 <AppContent />
                             </div>
                         </AdminProvider>
