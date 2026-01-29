@@ -8,6 +8,13 @@ const IntroLoader = ({ onComplete }) => {
     // 9: End
     const [phase, setPhase] = useState(-1);
     const [imgError, setImgError] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const timers = [
@@ -59,8 +66,8 @@ const IntroLoader = ({ onComplete }) => {
                             initial={{ opacity: 0, scale: 0 }}
                             animate={{
                                 opacity: phase >= 0 ? 1 : 0,
-                                scale: phase >= 3 ? 0.384 : (phase >= 1 ? 0.6 : (phase >= 0 ? 1 : 0)), // 0.384 * 650px = 250px (Navbar height)
-                                x: phase >= 1 ? '-44vw' : 0,
+                                scale: phase >= 3 ? (isMobile ? 0.2 : 0.384) : (phase >= 1 ? 0.6 : (phase >= 0 ? 1 : 0)), // Mobile: Still 0.2
+                                x: phase >= 1 ? (isMobile ? '-35vw' : '-44vw') : 0, // Mobile: Less left shift to keep it visible
                                 y: phase >= 1 ? '-44vh' : 0,
                             }}
                             transition={{
@@ -93,9 +100,9 @@ const IntroLoader = ({ onComplete }) => {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{
                                 opacity: phase >= 2 ? 1 : 0,
-                                scale: phase >= 3 ? 0.45 : (phase >= 2 ? 1 : 0.9),
-                                x: phase >= 3 ? '-28.5vw' : 0, // Adjusted for perfect overlap with scaled logo
-                                y: phase >= 3 ? '-44.5vh' : (phase >= 2 ? 0 : 20),
+                                scale: phase >= 3 ? (isMobile ? 0.3 : 0.45) : (phase >= 2 ? (isMobile ? 0.6 : 1) : 0.9), // Mobile: Smaller final scale
+                                x: phase >= 3 ? (isMobile ? '10vw' : '-28.5vw') : 0, // Mobile: Shift RIGHT to avoid overlap
+                                y: phase >= 3 ? (isMobile ? '-43vh' : '-44.5vh') : (phase >= 2 ? 0 : 20), // Mobile: Align Y
                             }}
                             transition={{
                                 duration: 1.5,
