@@ -229,7 +229,9 @@ const Navbar = () => {
                             justifyContent: 'center',
                             alignItems: 'center',
                             padding: '2rem',
-                            pointerEvents: 'auto'
+                            pointerEvents: 'auto',
+                            overflowY: 'auto', // Allow scrolling on landscape/small phones
+                            maxHeight: '100vh'
                         }}
                     >
                         <nav style={{ display: 'flex', flexDirection: 'column', gap: '2rem', textAlign: 'center' }}>

@@ -70,7 +70,7 @@ const About = () => {
             >
                 {/* Logo Section */}
                 <h2 style={{ fontSize: 'clamp(1.2rem, 3vw, 2rem)', color: '#fff', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                    At <img src="/logo_large.png" alt="MIPL" style={{ height: '30px', width: 'auto', borderRadius: '4px' }} /> MicroCircuits Innovations, We Began with <span style={{ color: '#00aaff' }}>One Mission:</span>
+                    At MicroCircuits Innovations, We Began with <span style={{ color: '#00aaff' }}>One Mission:</span>
                 </h2>
 
                 <h3 style={{ fontSize: 'clamp(1.8rem, 5vw, 3.8rem)', fontWeight: 800, marginBottom: '50px', lineHeight: 1.2, color: '#00aaff' }}>
@@ -116,8 +116,8 @@ const About = () => {
 
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '30px',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', // Auto-fit prevents 2-col force on tiny screens
+                    gap: isMobile ? '20px' : '30px',
                     margin: '40px 0',
                     justifyItems: 'center'
                 }}>
